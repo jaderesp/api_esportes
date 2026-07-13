@@ -37,11 +37,11 @@ std::string base64_decode(const std::string &in) {
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_diegodev_apidesportes_jogos_callback_na_ae(JNIEnv *env, jobject thiz) {
-    std::string parte1 = "f7d590a9520708141";
-    std::string parte2 = "9e884a703d17d3bd";
-    std::string parte3 = "39a3435cfc1a1fddb";
-    std::string parte4 = "6cd99951bdff26e534238a909";
-    std::string parte5 = "b7d01a5c12e1d91039181";
+    std::string parte1 = "d0c0dffd2fd08b06e";
+    std::string parte2 = "17074a524017331d6";
+    std::string parte3 = "04b893bffdd3d995d";
+    std::string parte4 = "33b9f6ceee7a2b46b0";
+    std::string parte5 = "b6e061c13adc8e0e26f237b97ba";
     std::string resultado = parte1 + parte2 + parte3 + parte4 + parte5;
     return env->NewStringUTF(resultado.c_str());
 }
@@ -51,10 +51,10 @@ JNIEXPORT jboolean JNICALL
 Java_com_diegodev_apidesportes_jogos_callback_na_verificarUrlNativa(JNIEnv *env, jobject thiz, jstring urlJava) {
     const char* urlC = env->GetStringUTFChars(urlJava, nullptr);
     std::string urlStr(urlC);
-    std::string parte1 = "YXBpLn";
-    std::string parte2 = "Nwb3";
-    std::string parte3 = "J0c2JyYX";
-    std::string parte4 = "BpLmNvbQ==";
+    std::string parte1 = "YXBpLm";
+    std::string parte2 = "Z1dGVi";
+    std::string parte3 = "b2xzLmNvbS";
+    std::string parte4 = "5icg==";
     std::string base64Completo = parte1 + parte2 + parte3 + parte4;
 
     std::string palavraEsperada = base64_decode(base64Completo);

@@ -30,7 +30,7 @@ public class RpCategory {
         this.context = activity;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://your_base_url/") // substitua pela URL base da sua API
+                .baseUrl("https://api.futebols.com.br/")
                 .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
