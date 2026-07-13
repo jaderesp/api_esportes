@@ -8,8 +8,8 @@ import com.diegodev.apidesportes.jogos.dialog.ExpiredDialogFragment;
 import com.diegodev.apidesportes.jogos.item.ItemCat;
 import com.diegodev.apidesportes.jogos.interfac.ServiceCate;
 import com.diegodev.apidesportes.jogos.utils.UnsafeOkHttpClient;
+import com.diegodev.apidesportes.jogos.utils.ApiConfig;
 import com.diegodev.apidesportes.jogos.bancoSql.CategoriaDatabase;
-import com.diegodev.apidesportes.jogos.callback.na;
 import com.google.gson.Gson;
 import java.util.List;
 import retrofit2.Call;
@@ -30,7 +30,7 @@ public class RpCategory {
         this.context = activity;
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.futebols.com.br/")
+                .baseUrl(ApiConfig.getBaseUrl())
                 .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -48,7 +48,7 @@ public class RpCategory {
             public void onResponse(Call<List<ItemCat>> call, Response<List<ItemCat>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String urlChamada = call.request().url().toString();
-                    if (!na.verificarUrlNativa(urlChamada)) {
+                    if (!ApiConfig.validateRequestedUrl(urlChamada)) {
                         System.exit(0);
                         return;
                     }

@@ -25,12 +25,11 @@ import com.diegodev.apidesportes.jogos.adapter.DataAdapter;
 import com.diegodev.apidesportes.jogos.adapter.JogosAdapter;
 import com.diegodev.apidesportes.jogos.bancoSql.CategoriaDatabase;
 import com.diegodev.apidesportes.jogos.bancoSql.JogosDatabase;
-import com.diegodev.apidesportes.jogos.callback.dja;
-import com.diegodev.apidesportes.jogos.callback.na;
 import com.diegodev.apidesportes.jogos.item.ItemCat;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
 import com.diegodev.apidesportes.jogos.response.ApiMoviesCaller;
 import com.diegodev.apidesportes.jogos.response.RpCategory;
+import com.diegodev.apidesportes.jogos.utils.ApiConfig;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -121,10 +120,8 @@ public class ActivityEsporte extends AppCompatActivity {
 
 
     private void InicarApi(){
-
-        String ou = na.ae();
-        String json2 = dja.dpt(ou);
-        url = json2;
+        url = ApiConfig.getBaseUrl();
+        Log.d(TAG, "Base URL selecionada: " + url);
 
         RpCategory rp = new RpCategory(this);
         rp.execute(url+"campeonatos",token);

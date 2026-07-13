@@ -6,7 +6,7 @@ import android.util.Log;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
 import com.diegodev.apidesportes.jogos.interfac.ServiceJogos;
 import com.diegodev.apidesportes.jogos.bancoSql.JogosDatabase;
-import com.diegodev.apidesportes.jogos.callback.na;
+import com.diegodev.apidesportes.jogos.utils.ApiConfig;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,7 +55,7 @@ public class ApiMoviesCaller {
                     Log.d(TAG, "Resposta do servidor: " + itemCategories);
 
                     String urlChamada = call.request().url().toString();
-                    if (!na.verificarUrlNativa(urlChamada)) {
+                    if (!ApiConfig.validateRequestedUrl(urlChamada)) {
                         System.exit(0);
                         return;
                     }

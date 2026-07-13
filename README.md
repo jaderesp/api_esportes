@@ -77,6 +77,45 @@ Autenticacao:
 
 ---
 
+## Configuracao pratica do dominio da API
+
+Agora o SDK permite configurar o dominio/base da API sem editar codigo Java/C++.
+
+Prioridade de uso da URL:
+
+1. `API_BASE_URL` definida no build (gradle.properties ou variavel de ambiente).
+2. URL nativa/ofuscada do SDK (fallback atual).
+3. Fallback final interno: `https://api.futebols.com.br/api/`
+
+### Opcao 1 - `gradle.properties` (recomendado)
+
+No `gradle.properties` do projeto consumidor, adicione:
+
+```properties
+API_BASE_URL=https://api.futebols.com.br/api/
+```
+
+### Opcao 2 - variavel de ambiente (CI/CD)
+
+Defina a variavel antes do build:
+
+```bash
+export API_BASE_URL=https://api.futebols.com.br/api/
+```
+
+No Windows PowerShell:
+
+```powershell
+$env:API_BASE_URL="https://api.futebols.com.br/api/"
+```
+
+Observacoes:
+
+- Sempre informe com `http(s)` e preferencialmente terminando com `/`.
+- Exemplo para outro ambiente: `https://homolog.api.futebols.com.br/api/`
+
+---
+
 ## Como usar no seu projeto Android
 
 ## Aviso importante: mudanca de repositorio (GitHub/JitPack)
