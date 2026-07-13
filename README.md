@@ -1,7 +1,7 @@
 # SDK de Esportes - Futebols
 
 <p align="center">
-  <img src="../.cursor/projects/c-Users-jmsof-Downloads-apk-sports/assets/c__Users_jmsof_AppData_Roaming_Cursor_User_workspaceStorage_0caba6bddd43bd902a1f1310b32fc32f_images_logo-futebols-alpha-f201cb43-40c1-49c5-9c9e-eefd7743c7ff.png" alt="Logo Futebols" width="420" />
+  <img src="./docs/assets/logo-futebols.png" alt="Logo Futebols" width="420" />
 </p>
 
 <p align="center">
@@ -9,16 +9,22 @@
 </p>
 
 <p align="center">
-  <a href="https://api.futebols.com.br/" target="_blank"><strong>Acessar fornecedor da API (Futebols)</strong></a>
+  <a href="https://futebols.com.br/" target="_blank"><strong>Acessar fornecedor da API (Futebols)</strong></a>
 </p>
 
 <p align="center">
-  <a href="https://wa.me/5599999999999?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20com%20SDK%20de%20esportes%20futebols.com.br." target="_blank">
+  <a href="https://documenter.getpostman.com/view/8125887/2sB2qWHQLS#baaf4a18-cd83-4ca6-854f-b70c555e616e" target="_blank">
+    <img alt="Documentacao da API" src="https://img.shields.io/badge/Documentacao-Postman-orange?style=for-the-badge&logo=postman&logoColor=white" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://wa.me/5516997141457?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20com%20SDK%20de%20esportes%20futebols.com.br." target="_blank">
     <img alt="WhatsApp" src="https://img.shields.io/badge/WhatsApp-Suporte-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" />
   </a>
 </p>
 
-> Importante: altere o numero `5599999999999` no link acima para o WhatsApp oficial do desenvolvedor/suporte.
+> Suporte via WhatsApp configurado no botao acima.
 
 ---
 
@@ -135,7 +141,8 @@ No Windows (PowerShell):
 
 ## Fornecedor da API
 
-- Site/Login: [https://api.futebols.com.br/](https://api.futebols.com.br/)
+- Site/Login: [https://futebols.com.br/](https://futebols.com.br/)
+- Documentacao da API: [Postman - Futebol API api.futebols.com.br](https://documenter.getpostman.com/view/8125887/2sB2qWHQLS#baaf4a18-cd83-4ca6-854f-b70c555e616e)
 - No painel, copie seu token em **Sistema -> Meus Dados**.
 
 ---
