@@ -79,6 +79,46 @@ Autenticacao:
 
 ## Como usar no seu projeto Android
 
+## Aviso importante: mudanca de repositorio (GitHub/JitPack)
+
+> **Atencao:** o repositorio oficial deste SDK foi migrado.
+>
+> - Repositorio antigo: [https://github.com/DevXoneTv/api_esportes](https://github.com/DevXoneTv/api_esportes)
+> - Repositorio atual: [https://github.com/jaderesp/api_esportes](https://github.com/jaderesp/api_esportes)
+
+Se sua dependencia ainda usa `com.github.DevXoneTv`, ela esta apontando para o repositorio antigo.
+Como o projeto usa **JitPack**, voce precisa trocar o dono/repositorio na dependencia para buscar novas versoes no local correto.
+
+Dependencia antiga:
+
+```groovy
+dependencies {
+    implementation 'com.github.DevXoneTv:api_esportes:1.0'
+}
+```
+
+Dependencia atualizada (Groovy):
+
+```groovy
+dependencies {
+    implementation 'com.github.jaderesp:api_esportes:1.0'
+}
+```
+
+Dependencia atualizada (Kotlin DSL):
+
+```kotlin
+dependencies {
+    implementation("com.github.jaderesp:api_esportes:1.0")
+}
+```
+
+Passos apos atualizar:
+
+1. Sincronize o Gradle (`Sync Now` no Android Studio).
+2. Confirme se a versao usada (ex.: `1.0`) existe como tag no novo repositorio.
+3. Se houver versao mais nova (ex.: `1.1`, `2.0`), atualize no final da dependencia.
+
 ## 1) Requisitos
 
 - Android Studio atualizado
