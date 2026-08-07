@@ -9,7 +9,7 @@ Leia este arquivo antes de iniciar qualquer trabalho neste repositório.
 Integra dados de jogos, campeonatos e placares da API **Futebols**:
 
 - Base API: `https://api.futebols.com.br/api/`
-- Rotas: `GET /api/campeonatos` e `GET /api/jogos`
+- Rotas: `GET /api/campeonatos`, `GET /api/jogos` e `GET /api/campeonato/{id}/classificacao`
 - Autenticação: header `Authorization: Bearer TOKEN`
 - Distribuição via **JitPack**: `com.github.jaderesp:api_esportes:<versao>` (repo atual: `jaderesp/api_esportes`, o antigo `DevXoneTv` está obsoleto)
 - Suporte: https://futebols.com.br/ | Docs: Postman (link no README.md)
@@ -55,7 +55,7 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
   `& "C:\Users\jmsof\AppData\Local\Android\Sdk\platform-tools\adb.exe" install -r demo\build\outputs\apk\debug\demo-debug.apk`
 - Abrir: `adb shell am start -n com.diegodev.apidesportes.demo/.MainActivity`
 - Emulador disponível: AVD `Medium_Phone_API_36.1`
-- Celular usado nos testes: Samsung `SM_G990E`
+- Celular usado nos testes: Samsung `SM_G990E` (adb serial `RQCW504BWSK`)
 
 ## Mudanças de layout/source e atualização dos clientes
 
@@ -64,16 +64,20 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 
 ## Estado atual (última sessão)
 
-- Criado módulo `demo/` (app host para teste) — modificações ainda **não commitadas**:
+- Criado módulo `demo/` (app host para teste):
   - `settings.gradle.kts` — adicionado `include(":demo")`
-  - `demo/build.gradle.kts`, manifest, `MainActivity.java`, layout, strings
+  - `demo/build.gradle.kts`, manifest, `MainActivity.java`, layout, strings, `demo/.gitignore` (`/build`)
   - `local.properties` (não versionar)
 - Build e instalação do demo no celular com sucesso.
 - Teste manual: abrir `Demo Esportes` → colar token Futebols → "Abrir Esportes".
+- **Release 1.2 publicada** (branch `feature/classificacao-canais`, tag `1.2`): canais de transmissão + tabela de classificação + módulo demo.
 - **Implementada tabela de classificação** (nova rota `api/campeonato/{id}/classificacao`):
   - Ao selecionar um campeonato, aparece a opção **"Tabela"** acima de "HOJE" na coluna lateral (`DataItem`/`DataAdapter`); ao clicar, mostra a classificação no espaço central (`ClassificacaoAdapter`).
   - Novos arquivos: `ItemClassificacao`, `ServiceClassificacao`, `ApiClassificacaoCaller` (aceita array direto ou objeto com array), `ClassificacaoDao`, `ClassificacaoDatabase`, `DataItem`, layouts `api_classificacao_header`, `api_item_classificacao`, `api_item_classificacao_opcao`.
   - Modelo mapeia padrão snake_case com alternativas camelCase; ajustar `@SerializedName` se o JSON real diferir (ver `docs/CLASSIFICACAO.md`).
+  - **JSON real (camp 1957, Brasileiro Série A):** array de objetos com `time_nome` no nível superior (snake_case). A API **não retorna logo/escudo** — placeholder `ic_time_placeholder` (escudo genérico) no `ClassificacaoAdapter` via `ImageLoader.load(..., placeholderRes)`.
+  - **Corrida de leitura corrigida:** `buscarClassificacao` chama `limparPorCamp(campId)` **antes** de disparar a busca + polling, para a tela não exibir linhas antigas (ex.: sem nome) do cache Room.
+  - **Fontes da tabela reajustadas:** cabeçalho/colunas `_7sdp`, posição `_8sdp`, altura da linha `_32sdp`.
 - **Implementado modal de canais de transmissão** (clique no jogo → bottom sheet):
   - `ItemJogos` ganhou os campos `canais`, `canais_ia`, `canais_simples`, `canais_links` (`List<String>`).
   - `JogosDatabase` versão 1 → **2** + `Converters.java` (Room salva `List<String>` como JSON; usa `fallbackToDestructiveMigration`, cache antigo é apagado).
@@ -87,6 +91,6 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 ## Observações técnicas
 
 - `ActivityEsporte` usa `salvarHoraRedeSaoPaulo` (SharedPreferences `ClienteSetup`, chave `DataAtual`) e gera 5 datas a partir da hora do servidor (America/Sao_Paulo).
-- Room: bancos `JogosDatabase`/`CategoriaDatabase` (cache local). Aviso de schema export não configurado (cosmético).
+- Room: bancos `JogosDatabase`/`CategoriaDatabase`/`ClassificacaoDatabase` (cache local; `classificacao.db` com WAL). Aviso de schema export não configurado (cosmético).
 - Dependências principais: Retrofit 2.9.0, OkHttp 4.9.3, Gson, Glide 4.16.0, Room 2.6.1, Lottie 6.1.0, sdp 1.1.1.
 - minSdk 21, compileSdk 35, Java 11.
