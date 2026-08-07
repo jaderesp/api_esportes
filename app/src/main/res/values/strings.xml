@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Api de Sportes</string>
+
+    <!-- Modal de canais de transmissão -->
+    <string name="modal_canais_title">Canais de Transmissão</string>
+    <string name="modal_canais_close">Fechar</string>
+    <string name="modal_canais_empty">Nenhum canal informado para este jogo.</string>
+    <string name="modal_canais_sec_tv">Canais de TV</string>
+    <string name="modal_canais_sec_ia">Canais IA</string>
+    <string name="modal_canais_sec_simples">Canais Simples</string>
+    <string name="modal_canais_sec_links">Links</string>
+
+    <!-- Tabela de classificação -->
+    <string name="opcao_classificacao">Tabela</string>
+    <string name="classificacao_col_time">Time</string>
+    <string name="classificacao_col_j">J</string>
+    <string name="classificacao_col_v">V</string>
+    <string name="classificacao_col_e">E</string>
+    <string name="classificacao_col_d">D</string>
+    <string name="classificacao_col_pts">Pts</string>
+    <string name="empty_classificacao">Sem tabela de classificação para este campeonato.</string>
+    <string name="empty_jogos">Nenhum Jogo Encontrado !</string>
 </resources>

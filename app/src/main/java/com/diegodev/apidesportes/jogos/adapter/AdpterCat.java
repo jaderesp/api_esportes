@@ -24,12 +24,19 @@ public class AdpterCat extends RecyclerView.Adapter<AdpterCat.ViewHolder> {
     private boolean inicio = false;
     private Context context;
     private ActivityEsporte fragment;
+    private int campanhaSelecionadaId = -1;
 
     public AdpterCat(Context context, List<ItemCat> list, ActivityEsporte fragment) {
         this.context = context;
         this.list = list;
         this.fragment = fragment;
 
+    }
+
+    /** Marca visualmente o campeonato selecionado (a opção "Tabela" fica disponível). */
+    public void setCampanhaSelecionada(int id) {
+        this.campanhaSelecionadaId = id;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -51,6 +58,8 @@ public class AdpterCat extends RecyclerView.Adapter<AdpterCat.ViewHolder> {
         String logo = itemCategory.getLogo();
         int categoryId = itemCategory.getCategory();
 
+        // Destaca o campeonato selecionado (fundo azul via sport_selector)
+        holder.categorychannel.setSelected(categoryId == campanhaSelecionadaId);
 
 
         if (categoryName != null) {

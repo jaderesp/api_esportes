@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Opção "Tabela" (classificação) que aparece ACIMA de "HOJE" na coluna de datas,
+  enquanto um campeonato estiver selecionado.
+  Visualmente distinta das datas (ícone de troféu) para o usuário perceber
+  que é uma ação diferente.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_42sdp"
+    android:layout_height="@dimen/_42sdp"
+    android:layout_gravity="center"
+    android:background="@drawable/bg_classificacao_item"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="2dp">
+
+    <ImageView
+        android:id="@+id/ivTrophy"
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="@dimen/_14sdp"
+        android:contentDescription="@string/opcao_classificacao"
+        android:src="@drawable/ic_trophy_white" />
+
+    <TextView
+        android:id="@+id/tvOpcaoClassificacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:gravity="center"
+        android:text="@string/opcao_classificacao"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_5sdp"
+        android:textStyle="bold" />
+</LinearLayout>

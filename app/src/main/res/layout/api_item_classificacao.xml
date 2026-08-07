@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Linha da tabela de classificação. Focável para navegação com controle (TV). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_32sdp"
+    android:layout_marginTop="@dimen/_3sdp"
+    android:background="@drawable/sport_selector"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/_6sdp"
+    android:paddingEnd="@dimen/_6sdp">
+
+    <TextView
+        android:id="@+id/tvPosicao"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_8sdp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/ivTimeLogo"
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="@dimen/_18sdp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="Logo do time" />
+
+    <TextView
+        android:id="@+id/tvTimeName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_8sdp" />
+
+    <TextView
+        android:id="@+id/tvJogos"
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#DBDBDB"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:id="@+id/tvVitorias"
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#DBDBDB"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:id="@+id/tvEmpates"
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#DBDBDB"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:id="@+id/tvDerrotas"
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#DBDBDB"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:id="@+id/tvPontos"
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_8sdp"
+        android:textStyle="bold" />
+</LinearLayout>

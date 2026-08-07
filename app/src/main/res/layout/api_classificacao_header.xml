@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cabeçalho fixo da tabela de classificação (não é focado). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_24sdp"
+    android:background="#1E000000"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/_6sdp"
+    android:paddingEnd="@dimen/_6sdp">
+
+    <TextView
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="#"
+        android:textColor="@color/modal_section_title"
+        android:textSize="@dimen/_7sdp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:text="@string/classificacao_col_time"
+        android:textColor="@color/modal_section_title"
+        android:textSize="@dimen/_7sdp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/classificacao_col_j"
+        android:textColor="@color/modal_section_title"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/classificacao_col_v"
+        android:textColor="@color/modal_section_title"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/classificacao_col_e"
+        android:textColor="@color/modal_section_title"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:layout_width="@dimen/_14sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/classificacao_col_d"
+        android:textColor="@color/modal_section_title"
+        android:textSize="@dimen/_7sdp" />
+
+    <TextView
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/classificacao_col_pts"
+        android:textColor="@color/modal_section_title"
+        android:textSize="@dimen/_7sdp"
+        android:textStyle="bold" />
+</LinearLayout>

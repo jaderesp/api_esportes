@@ -20,3 +20,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ApideSportes"
 include(":app")
+include(":demo")

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,12 +22,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.diegodev.apidesportes.R;
 import com.diegodev.apidesportes.jogos.adapter.AdpterCat;
+import com.diegodev.apidesportes.jogos.adapter.ClassificacaoAdapter;
 import com.diegodev.apidesportes.jogos.adapter.DataAdapter;
 import com.diegodev.apidesportes.jogos.adapter.JogosAdapter;
+import com.diegodev.apidesportes.jogos.dialog.CanaisDialogFragment;
 import com.diegodev.apidesportes.jogos.bancoSql.CategoriaDatabase;
+import com.diegodev.apidesportes.jogos.bancoSql.ClassificacaoDatabase;
 import com.diegodev.apidesportes.jogos.bancoSql.JogosDatabase;
+import com.diegodev.apidesportes.jogos.item.DataItem;
 import com.diegodev.apidesportes.jogos.item.ItemCat;
+import com.diegodev.apidesportes.jogos.item.ItemClassificacao;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
+import com.diegodev.apidesportes.jogos.response.ApiClassificacaoCaller;
 import com.diegodev.apidesportes.jogos.response.ApiMoviesCaller;
 import com.diegodev.apidesportes.jogos.response.RpCategory;
 import com.diegodev.apidesportes.jogos.utils.ApiConfig;
@@ -50,11 +57,15 @@ public class ActivityEsporte extends AppCompatActivity {
     private static final String TAG = "EsporteActivity";
     private CategoriaDatabase db;
     private JogosDatabase dbjogos;
+    private ClassificacaoDatabase dbClassificacao;
     private LinearLayout splash,geral,lisvazia,loading;
     private int tentativas = 0;
     private final int MAX_TENTATIVAS = 7;
     private Handler handler = new Handler(Looper.getMainLooper());
     public static String horaBaseFormatada = "";
+
+    // Campeonato selecionado (-1 = nenhum; então não há opção "Tabela" na coluna de datas)
+    private int campSelecionadoId = -1;
 
     private static final String PREFS_NAME = "ApiEsporteBrPrefs";
     private static final String KEY_TOKEN = "token";
@@ -101,6 +112,7 @@ public class ActivityEsporte extends AppCompatActivity {
 
         dbjogos = JogosDatabase.getInstance(this);
         db = CategoriaDatabase.getInstance(this);
+        dbClassificacao = ClassificacaoDatabase.getInstance(this);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             splash.setVisibility(View.GONE);
@@ -134,8 +146,21 @@ public class ActivityEsporte extends AppCompatActivity {
     private void recicleDate() {
 
         recyclerViewDatas.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        List<DataItem> itens = new ArrayList<>();
         List<String> datas = gerarListaDeDatas(this);
-        DataAdapter adapter = new DataAdapter(this, datas,this);
+
+        // Com um campeonato selecionado, a opção "Tabela" (classificação)
+        // fica ACIMA de "HOJE" na coluna lateral.
+        if (campSelecionadoId != -1) {
+            itens.add(DataItem.classificacao());
+        }
+
+        for (int i = 0; i < datas.size(); i++) {
+            itens.add(DataItem.data(datas.get(i), i == 0));
+        }
+
+        DataAdapter adapter = new DataAdapter(this, itens, this);
         recyclerViewDatas.setAdapter(adapter);
     }
 
@@ -216,6 +241,10 @@ public class ActivityEsporte extends AppCompatActivity {
         runOnUiThread(() -> {
             loading.setVisibility(View.GONE);
             setList(new ArrayList<>());
+            TextView tvEmpty = findViewById(R.id.tvEmptyMsg);
+            if (tvEmpty != null) {
+                tvEmpty.setText(R.string.empty_jogos);
+            }
             lisvazia.setVisibility(View.VISIBLE);
 
         });
@@ -223,8 +252,76 @@ public class ActivityEsporte extends AppCompatActivity {
 
 
     public void buscarJogosPorId(int idCamp) {
+        // Marca o campeonato selecionado (faz aparecer a opção "Tabela" acima de HOJE)
+        campSelecionadoId = idCamp;
+        if (adapter != null) {
+            adapter.setCampanhaSelecionada(idCamp);
+        }
+        recicleDate();
         tentativas = 0;
         tentarBuscarJogosPorId(idCamp);
+    }
+
+    /** Clique na opção "Tabela": busca e mostra a classificação do campeonato selecionado. */
+    public void buscarClassificacao() {
+        if (campSelecionadoId == -1) {
+            return;
+        }
+        loading.setVisibility(View.VISIBLE);
+
+        // Limpa o cache antigo do campeonato ANTES de buscar, para a tela não
+        // exibir linhas velhas (ex.: sem nome) enquanto a API não responde.
+        // Só depois de limpar é que disparamos a API e o polling.
+        new Thread(() -> {
+            dbClassificacao.classificacaoDao().limparPorCamp(campSelecionadoId);
+
+            runOnUiThread(() -> {
+                ApiClassificacaoCaller caller = new ApiClassificacaoCaller(this);
+                caller.chamarApi(url, token, campSelecionadoId);
+
+                tentativas = 0;
+                tentarBuscarClassificacao();
+            });
+        }).start();
+    }
+
+    private void tentarBuscarClassificacao() {
+        new Thread(() -> {
+            List<ItemClassificacao> lista = dbClassificacao.classificacaoDao().getPorCamp(campSelecionadoId);
+            if (lista != null && !lista.isEmpty()) {
+                runOnUiThread(() -> setClassificacao(lista));
+            } else {
+                tentativas++;
+                if (tentativas < MAX_TENTATIVAS) {
+                    Log.d("Classificacao", "Tentativa " + tentativas + " falhou. Tentando novamente em 1s...");
+                    handler.postDelayed(this::tentarBuscarClassificacao, 1000);
+                } else {
+                    runOnUiThread(this::ClassificacaoVazia);
+                    Log.d("Classificacao", "Nenhuma classificação encontrada após " + MAX_TENTATIVAS + " tentativas.");
+                }
+            }
+        }).start();
+    }
+
+    private void setClassificacao(List<ItemClassificacao> lista) {
+        runOnUiThread(() -> {
+            lisvazia.setVisibility(View.GONE);
+            loading.setVisibility(View.GONE);
+            ClassificacaoAdapter adapter = new ClassificacaoAdapter(this, lista);
+            listView.setAdapter(adapter);
+        });
+    }
+
+    private void ClassificacaoVazia() {
+        runOnUiThread(() -> {
+            loading.setVisibility(View.GONE);
+            listView.setAdapter(null);
+            TextView tvEmpty = findViewById(R.id.tvEmptyMsg);
+            if (tvEmpty != null) {
+                tvEmpty.setText(R.string.empty_classificacao);
+            }
+            lisvazia.setVisibility(View.VISIBLE);
+        });
     }
 
     private void tentarBuscarJogosPorId(int idCamp) {
@@ -260,6 +357,7 @@ public class ActivityEsporte extends AppCompatActivity {
                 Collections.sort(jogosFiltrados, (a, b) -> a.getCategoryname().compareToIgnoreCase(b.getCategoryname()));
                 runOnUiThread(() -> {
                     adapter = new AdpterCat(this, jogosFiltrados, this);
+                    adapter.setCampanhaSelecionada(campSelecionadoId);
                     recyclerViewCate.setAdapter(adapter);
                 });
             } else {
@@ -287,6 +385,9 @@ public class ActivityEsporte extends AppCompatActivity {
             lisvazia.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             JogosAdapter myAdapter = new JogosAdapter(this, itemJogos);
+            // Ao clicar em um jogo, abre o modal (bottom sheet) com os canais de transmissão.
+            myAdapter.setOnItemClickListener(jogo ->
+                    CanaisDialogFragment.newInstance(jogo).show(getSupportFragmentManager(), "canais_dialog"));
             listView.setAdapter(myAdapter);
 
         });

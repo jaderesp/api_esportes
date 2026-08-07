@@ -183,8 +183,9 @@
                             app:lottie_rawRes="@raw/listavazia" />
 
                         <TextView
+                            android:id="@+id/tvEmptyMsg"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:text="Nenhum Jogo Encontrado !"
+                            android:text="@string/empty_jogos"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_8sdp"
                             android:layout_width="wrap_content"

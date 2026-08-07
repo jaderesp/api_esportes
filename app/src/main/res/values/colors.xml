@@ -4,4 +4,19 @@
     <color name="white">#FFFFFFFF</color>
     <color name="cinzacategory">#50000000</color>
     <color name="cinzacategory1">#34474747</color>
+
+    <!-- Modal de canais de transmissão -->
+    <color name="modal_scrim">#66000000</color>
+    <color name="modal_panel">#F21A1A1A</color>
+    <color name="modal_divider">#33FFFFFF</color>
+    <color name="modal_chip_bg">#14FFFFFF</color>
+    <color name="modal_chip_stroke">#33FFFFFF</color>
+    <color name="modal_close_bg">#26FFFFFF</color>
+    <color name="modal_section_title">#B3FFFFFF</color>
+    <color name="modal_text_secondary">#99FFFFFF</color>
+
+    <!-- Opção "Tabela" (classificação) -->
+    <color name="classificacao_selected">#0080FF</color>
+    <color name="classificacao_focus">#33B5FF</color>
+    <color name="classificacao_normal">#09FFFFFF</color>
 </resources>

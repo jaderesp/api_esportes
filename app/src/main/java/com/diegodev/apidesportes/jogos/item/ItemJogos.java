@@ -8,6 +8,8 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 
 @Entity(tableName = "jogos")
 public class ItemJogos {
@@ -52,6 +54,20 @@ public class ItemJogos {
     @ColumnInfo(name = "camp_id")
     private int CampId;
 
+    // ✅ Canais de transmissão (novos campos da API /api/jogos)
+    // Arrays de nomes de canais. O Room salva como JSON (ver Converters.java).
+    @ColumnInfo(name = "canais")
+    private List<String> canais;
+
+    @ColumnInfo(name = "canais_ia")
+    private List<String> canaisIa;
+
+    @ColumnInfo(name = "canais_simples")
+    private List<String> canaisSimples;
+
+    @ColumnInfo(name = "canais_links")
+    private List<String> canaisLinks;
+
     @Ignore
     @SerializedName("campeonato")
     private Campeonato campeonato;
@@ -95,6 +111,18 @@ public class ItemJogos {
 
     public int getCampId() { return CampId ; }
     public void setCampId(int CampId) { this.CampId = CampId; }
+
+    public List<String> getCanais() { return canais; }
+    public void setCanais(List<String> canais) { this.canais = canais; }
+
+    public List<String> getCanaisIa() { return canaisIa; }
+    public void setCanaisIa(List<String> canaisIa) { this.canaisIa = canaisIa; }
+
+    public List<String> getCanaisSimples() { return canaisSimples; }
+    public void setCanaisSimples(List<String> canaisSimples) { this.canaisSimples = canaisSimples; }
+
+    public List<String> getCanaisLinks() { return canaisLinks; }
+    public void setCanaisLinks(List<String> canaisLinks) { this.canaisLinks = canaisLinks; }
 
     public Campeonato getCampeonato() { return campeonato; }
     public void setCampeonato(Campeonato campeonato) { this.campeonato = campeonato; }

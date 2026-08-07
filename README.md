@@ -128,6 +128,12 @@ Observacoes:
 Se sua dependencia ainda usa `com.github.DevXoneTv`, ela esta apontando para o repositorio antigo.
 Como o projeto usa **JitPack**, voce precisa trocar o dono/repositorio na dependencia para buscar novas versoes no local correto.
 
+Onde alterar essa dependencia:
+
+- Projeto Android com **Groovy**: arquivo `app/build.gradle` (ou modulo onde o SDK e usado).
+- Projeto Android com **Kotlin DSL**: arquivo `app/build.gradle.kts` (ou modulo onde o SDK e usado).
+- A alteracao deve ser feita dentro do bloco `dependencies { ... }`.
+
 Dependencia antiga:
 
 ```groovy
