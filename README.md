@@ -36,7 +36,9 @@ Este projeto e um **SDK Android** (modulo de biblioteca) para exibir:
 - lista de jogos;
 - status da partida (ao vivo, encerrado, etc.);
 - placares e logos dos times;
-- filtros por data e campeonato.
+- filtros por data e campeonato;
+- canais de transmissao de cada jogo (modal);
+- tabela de classificacao dos campeonatos.
 
 Em resumo: ele facilita colocar uma tela de esportes pronta dentro do seu app.
 
@@ -70,6 +72,7 @@ Rotas consumidas:
 
 - `GET /api/campeonatos`
 - `GET /api/jogos`
+- `GET /api/campeonato/{id}/classificacao`
 
 Autenticacao:
 
@@ -146,7 +149,7 @@ Dependencia atualizada (Groovy):
 
 ```groovy
 dependencies {
-    implementation 'com.github.jaderesp:api_esportes:1.0'
+    implementation 'com.github.jaderesp:api_esportes:1.2'
 }
 ```
 
@@ -154,15 +157,33 @@ Dependencia atualizada (Kotlin DSL):
 
 ```kotlin
 dependencies {
-    implementation("com.github.jaderesp:api_esportes:1.0")
+    implementation("com.github.jaderesp:api_esportes:1.2")
 }
 ```
 
-Passos apos atualizar:
+---
 
-1. Sincronize o Gradle (`Sync Now` no Android Studio).
-2. Confirme se a versao usada (ex.: `1.0`) existe como tag no novo repositorio.
-3. Se houver versao mais nova (ex.: `1.1`, `2.0`), atualize no final da dependencia.
+## Como receber atualizacoes do SDK
+
+Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`). O JitPack compila a biblioteca a partir da tag indicada no final da dependencia — por isso, **e obrigatorio atualizar a versao** para receber novas funcionalidades e correcoes.
+
+Para atualizar o SDK no seu app:
+
+1. Consulte a versao mais recente em **Releases/Tags** do repositorio:
+   `https://github.com/jaderesp/api_esportes/releases`
+2. No arquivo `app/build.gradle` (Groovy) ou `app/build.gradle.kts` (Kotlin DSL), troque o numero no final da dependencia (ex.: de `1.1` para `1.2`).
+3. Clique em `Sync Now` no Android Studio.
+4. Faca o build e publique o app normalmente.
+
+> Toda novidade de layout/funcionalidade e entregue quando o cliente sobe a versao da dependencia — nao e preciso mexer no codigo do app.
+
+### Novidades por versao
+
+**1.2** (atual):
+
+- **Canais de transmissao:** ao tocar em um jogo, abre um modal listando os canais que transmitem a partida. Detalhes em `docs/CANAIS_TRANSMISSAO.md`.
+- **Tabela de classificacao:** ao selecionar um campeonato, aparece a opcao "Tabela" acima de "HOJE" exibindo a classificacao completa. Detalhes em `docs/CLASSIFICACAO.md`.
+- Novo modulo `demo/` para testes em aparelho real.
 
 ## 1) Requisitos
 
