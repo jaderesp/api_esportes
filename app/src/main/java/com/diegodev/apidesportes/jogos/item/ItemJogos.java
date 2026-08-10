@@ -54,19 +54,25 @@ public class ItemJogos {
     @ColumnInfo(name = "camp_id")
     private int CampId;
 
-    // ✅ Canais de transmissão (novos campos da API /api/jogos)
-    // Arrays de nomes de canais. O Room salva como JSON (ver Converters.java).
+    // ✅ Canais de transmissão (campos da API /api/jogos)
+    // "canais" e "canais_ia" são arrays de nomes; "canais_simples" e "canais_links"
+    // são arrays de objetos. O Room salva como JSON (ver Converters.java).
+    // ATENÇÃO: a API usa snake_case; sem @SerializedName o Gson deixaria tudo null.
+    @SerializedName("canais")
     @ColumnInfo(name = "canais")
     private List<String> canais;
 
+    @SerializedName("canais_ia")
     @ColumnInfo(name = "canais_ia")
     private List<String> canaisIa;
 
+    @SerializedName("canais_simples")
     @ColumnInfo(name = "canais_simples")
-    private List<String> canaisSimples;
+    private List<ItemCanalSimples> canaisSimples;
 
+    @SerializedName("canais_links")
     @ColumnInfo(name = "canais_links")
-    private List<String> canaisLinks;
+    private List<ItemCanalLink> canaisLinks;
 
     @Ignore
     @SerializedName("campeonato")
@@ -118,11 +124,11 @@ public class ItemJogos {
     public List<String> getCanaisIa() { return canaisIa; }
     public void setCanaisIa(List<String> canaisIa) { this.canaisIa = canaisIa; }
 
-    public List<String> getCanaisSimples() { return canaisSimples; }
-    public void setCanaisSimples(List<String> canaisSimples) { this.canaisSimples = canaisSimples; }
+    public List<ItemCanalSimples> getCanaisSimples() { return canaisSimples; }
+    public void setCanaisSimples(List<ItemCanalSimples> canaisSimples) { this.canaisSimples = canaisSimples; }
 
-    public List<String> getCanaisLinks() { return canaisLinks; }
-    public void setCanaisLinks(List<String> canaisLinks) { this.canaisLinks = canaisLinks; }
+    public List<ItemCanalLink> getCanaisLinks() { return canaisLinks; }
+    public void setCanaisLinks(List<ItemCanalLink> canaisLinks) { this.canaisLinks = canaisLinks; }
 
     public Campeonato getCampeonato() { return campeonato; }
     public void setCampeonato(Campeonato campeonato) { this.campeonato = campeonato; }

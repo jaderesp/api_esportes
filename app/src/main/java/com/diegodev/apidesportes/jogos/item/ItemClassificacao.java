@@ -66,6 +66,18 @@ public class ItemClassificacao {
     @SerializedName(value = "saldo_gols", alternate = {"saldoGols"})
     private int saldoGols;
 
+    @ColumnInfo(name = "promocao")
+    @SerializedName("promocao")
+    private String promocao;
+
+    @ColumnInfo(name = "promocao_slug")
+    @SerializedName("promocao_slug")
+    private String promocaoSlug;
+
+    @ColumnInfo(name = "promocao_cor")
+    @SerializedName("promocao_cor")
+    private String promocaoCor;
+
     /** Objeto "time" vindo da API. Não vai para o banco; é achatado em timeName/logo. */
     @Ignore
     @SerializedName("time")
@@ -110,6 +122,15 @@ public class ItemClassificacao {
 
     public int getSaldoGols() { return saldoGols; }
     public void setSaldoGols(int saldoGols) { this.saldoGols = saldoGols; }
+
+    public String getPromocao() { return promocao; }
+    public void setPromocao(String promocao) { this.promocao = promocao; }
+
+    public String getPromocaoSlug() { return promocaoSlug; }
+    public void setPromocaoSlug(String promocaoSlug) { this.promocaoSlug = promocaoSlug; }
+
+    public String getPromocaoCor() { return promocaoCor; }
+    public void setPromocaoCor(String promocaoCor) { this.promocaoCor = promocaoCor; }
 
     public Time getTime() { return time; }
     public void setTime(Time time) { this.time = time; }

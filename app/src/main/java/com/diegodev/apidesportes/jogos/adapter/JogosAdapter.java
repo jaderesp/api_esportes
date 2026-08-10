@@ -5,13 +5,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.diegodev.apidesportes.R;
+import com.diegodev.apidesportes.jogos.item.ItemCanalLink;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
 import com.diegodev.apidesportes.jogos.utils.ImageLoader;
 import com.diegodev.apidesportes.jogos.utils.JogoStatus;
@@ -24,10 +27,16 @@ public class JogosAdapter extends RecyclerView.Adapter<JogosAdapter.ViewHolder> 
     private List<ItemJogos> list;
     private Context context;
     private OnItemClickListener onItemClickListener;
+    private OnCanalClickListener onCanalClickListener;
 
     /** Callback disparado quando o usuário clica em um jogo. */
     public interface OnItemClickListener {
         void onItemClick(ItemJogos jogo);
+    }
+
+    /** Callback disparado quando o usuário clica em um canal (canais_links) da linha do jogo. */
+    public interface OnCanalClickListener {
+        void onCanalClick(ItemJogos jogo, ItemCanalLink canal);
     }
 
     public JogosAdapter(Context context, List<ItemJogos> list) {
@@ -38,6 +47,11 @@ public class JogosAdapter extends RecyclerView.Adapter<JogosAdapter.ViewHolder> 
     /** Registra o clique no jogo (ex.: para abrir o modal de canais). */
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
+    }
+
+    /** Registra o clique em um canal da linha (ex.: para abrir o modal do canal). */
+    public void setOnCanalClickListener(OnCanalClickListener listener) {
+        this.onCanalClickListener = listener;
     }
 
     @NonNull
@@ -84,9 +98,63 @@ public class JogosAdapter extends RecyclerView.Adapter<JogosAdapter.ViewHolder> 
             }
         });
 
+        // Faixa de canais de transmissão (canais_links) abaixo da linha do jogo
+        preencherCanais(holder, itemJogos);
+
         // Logs para depuração
         Log.d(TAG, "Logo Time A: " + itemJogos.getLogoA());
         Log.d(TAG, "Logo Time B: " + itemJogos.getLogoB());
+    }
+
+    /**
+     * Exibe APENAS os canais_links do jogo como chips focáveis abaixo da linha.
+     * Cada chip, ao ser clicado, dispara o callback para abrir o modal do canal.
+     */
+    private void preencherCanais(ViewHolder holder, ItemJogos jogo) {
+        LinearLayout container = holder.containerCanaisLinha;
+        HorizontalScrollView scroll = holder.scrollCanaisLinha;
+        if (container == null || scroll == null) {
+            return;
+        }
+
+        container.removeAllViews();
+
+        List<ItemCanalLink> links = jogo.getCanaisLinks();
+        boolean temLinks = links != null && !links.isEmpty();
+
+        if (!temLinks) {
+            scroll.setVisibility(View.GONE);
+            return;
+        }
+
+        scroll.setVisibility(View.VISIBLE);
+
+        for (ItemCanalLink canal : links) {
+            if (canal == null) {
+                continue;
+            }
+            View chip = inflarChip(container, canal.getChannelName(), canal.getChannelLogo());
+            chip.setOnClickListener(v -> {
+                if (onCanalClickListener != null) {
+                    onCanalClickListener.onCanalClick(jogo, canal);
+                }
+            });
+            container.addView(chip);
+        }
+    }
+
+    /** Cria um chip de canal com nome e logotipo (sem anexar ao container). */
+    private View inflarChip(LinearLayout container, String nome, String logo) {
+        View chip = LayoutInflater.from(context)
+                .inflate(R.layout.api_item_canal_linha, container, false);
+
+        TextView txtNome = chip.findViewById(R.id.tv_canal_nome);
+        txtNome.setText(nome == null || nome.trim().isEmpty() ? "Canal" : nome.trim());
+
+        ImageView logoView = chip.findViewById(R.id.iv_canal_logo);
+        ImageLoader.load(context, logo, logoView);
+
+        return chip;
     }
 
     @Override
@@ -97,6 +165,8 @@ public class JogosAdapter extends RecyclerView.Adapter<JogosAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView TeamA, TeamB, imgvs, logocamp;
         TextView txtTime, TimeA, TimeB, txtdescricao, txtPlacar, campname;
+        HorizontalScrollView scrollCanaisLinha;
+        LinearLayout containerCanaisLinha;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -110,6 +180,8 @@ public class JogosAdapter extends RecyclerView.Adapter<JogosAdapter.ViewHolder> 
             txtPlacar = itemView.findViewById(R.id.txtPlacar);
             logocamp = itemView.findViewById(R.id.iv_iconCamp);
             campname = itemView.findViewById(R.id.tv_nameCamp);
+            scrollCanaisLinha = itemView.findViewById(R.id.scrollCanaisLinha);
+            containerCanaisLinha = itemView.findViewById(R.id.containerCanaisLinha);
         }
     }
 }

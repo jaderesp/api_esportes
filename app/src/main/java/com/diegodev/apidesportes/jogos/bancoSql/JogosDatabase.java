@@ -10,9 +10,9 @@ import androidx.room.TypeConverters;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
 
 
-// version = 2 porque adicionamos os campos de canais na tabela "jogos".
+// version = 3 porque canais_simples/canais_links passaram a ser objetos.
 // fallbackToDestructiveMigration() apaga o cache antigo automaticamente na atualização.
-@Database(entities = {ItemJogos.class}, version = 2)
+@Database(entities = {ItemJogos.class}, version = 3)
 @TypeConverters({Converters.class})
 public abstract class JogosDatabase extends RoomDatabase {
 

@@ -4,7 +4,7 @@
 	android:id="@+id/focos"
 	android:layout_marginTop="@dimen/_5sdp"
 	android:background="@drawable/sport_selector"
-	android:orientation="horizontal"
+	android:orientation="vertical"
 	android:focusable="true"
 	android:layout_centerInParent="true"
 	android:layout_width="match_parent"
@@ -173,5 +173,27 @@
 
 	</LinearLayout>
 
+	<!-- Faixa de canais de transmissão. Oculta se não houver canais. -->
+	<HorizontalScrollView
+		android:id="@+id/scrollCanaisLinha"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/_2sdp"
+		android:layout_marginBottom="@dimen/_4sdp"
+		android:fillViewport="true"
+		android:overScrollMode="never"
+		android:scrollbars="none">
+
+		<LinearLayout
+			android:id="@+id/containerCanaisLinha"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
+			android:paddingStart="@dimen/_6sdp"
+			android:paddingEnd="@dimen/_6sdp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<!-- Chips criados via código em JogosAdapter -->
+		</LinearLayout>
+	</HorizontalScrollView>
 
 </LinearLayout>

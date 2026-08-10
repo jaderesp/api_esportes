@@ -37,7 +37,7 @@ Este projeto e um **SDK Android** (modulo de biblioteca) para exibir:
 - status da partida (ao vivo, encerrado, etc.);
 - placares e logos dos times;
 - filtros por data e campeonato;
-- canais de transmissao de cada jogo (modal);
+- canais de transmissao de cada jogo (faixa de chips na lista + modal);
 - tabela de classificacao dos campeonatos.
 
 Em resumo: ele facilita colocar uma tela de esportes pronta dentro do seu app.
@@ -121,6 +121,27 @@ Observacoes:
 
 ## Como usar no seu projeto Android
 
+### Passo 1 — Adicionar o repositorio JitPack
+
+O SDK e compilado automaticamente pelo **JitPack** a partir das **tags** deste
+repositorio (`https://github.com/jaderesp/api_esportes`). Por isso, o primeiro
+passo e informar o repositorio do JitPack ao Gradle.
+
+No `settings.gradle` / `settings.gradle.kts` (raiz do projeto):
+
+```groovy
+dependencyResolutionManagement {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+> Projetos com Gradle antigo podem configurar em
+> `allprojects { repositories { maven { url 'https://jitpack.io' } } }`.
+
+### Passo 2 — Adicionar a dependencia
+
 ## Aviso importante: mudanca de repositorio (GitHub/JitPack)
 
 > **Atencao:** o repositorio oficial deste SDK foi migrado.
@@ -161,29 +182,41 @@ dependencies {
 }
 ```
 
+### Passo 3 — Salvar token e abrir a tela
+
+Veja as secoes **"Salvar token antes de abrir a tela"** e **"Abrir a tela de esportes"** abaixo.
+
 ---
 
-## Como receber atualizacoes do SDK
+## Como receber atualizacoes do SDK (tags e versoes)
 
-Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`). O JitPack compila a biblioteca a partir da tag indicada no final da dependencia — por isso, **e obrigatorio atualizar a versao** para receber novas funcionalidades e correcoes.
+Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`).
+O JitPack compila a biblioteca a partir da tag indicada no final da dependencia
+— por isso, **e obrigatorio atualizar a versao** para receber novas
+funcionalidades e correcoes.
 
 Para atualizar o SDK no seu app:
 
 1. Consulte a versao mais recente em **Releases/Tags** do repositorio:
-   `https://github.com/jaderesp/api_esportes/releases`
-2. No arquivo `app/build.gradle` (Groovy) ou `app/build.gradle.kts` (Kotlin DSL), troque o numero no final da dependencia (ex.: de `1.1` para `1.2`).
+   `https://github.com/jaderesp/api_esportes/releases` (a versao mais alta = mais recente).
+2. No arquivo de dependencias (Groovy ou Kotlin DSL), troque o numero no final
+   da dependencia (ex.: de `1.1` para `1.2`).
 3. Clique em `Sync Now` no Android Studio.
 4. Faca o build e publique o app normalmente.
 
-> Toda novidade de layout/funcionalidade e entregue quando o cliente sobe a versao da dependencia — nao e preciso mexer no codigo do app.
+> Toda novidade de layout/funcionalidade e entregue quando o cliente sobe a
+> versao da dependencia — nao e preciso mexer no codigo do app.
 
 ### Novidades por versao
 
 **1.2** (atual):
 
-- **Canais de transmissao:** ao tocar em um jogo, abre um modal listando os canais que transmitem a partida. Detalhes em `docs/CANAIS_TRANSMISSAO.md`.
+- **Canais de transmissao:** cada jogo com `canais_links` mostra uma **faixa de
+  chips** (logotipo + nome) abaixo da linha; clicar na linha abre o **modal** com
+  todas as secoes (Links, Simples, TV, IA) e clicar em um chip abre os
+  **detalhes do canal** (logo, servidor e URL de transmissao). Detalhes em `docs/CANAIS_TRANSMISSAO.md`.
 - **Tabela de classificacao:** ao selecionar um campeonato, aparece a opcao "Tabela" acima de "HOJE" exibindo a classificacao completa. Detalhes em `docs/CLASSIFICACAO.md`.
-- Novo modulo `demo/` para testes em aparelho real.
+- Novo modulo `demo/` para testes em aparelho real/TV.
 
 ## 1) Requisitos
 

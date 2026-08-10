@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chip de um canal de transmissão (canais_links) na faixa abaixo do jogo.
+     Design compacto: logo pequeno em moldura circular, nome discreto.
+     Focável para navegação por controle remoto (TV). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chipCanal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/_1sdp"
+    android:layout_marginEnd="@dimen/_1sdp"
+    android:background="@drawable/bg_canal_chip_selector"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/_9sdp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/_2sdp"
+    android:paddingEnd="@dimen/_3sdp"
+    android:paddingTop="@dimen/_1sdp"
+    android:paddingBottom="@dimen/_1sdp">
+
+    <!-- Logotipo do canal em moldura circular -->
+    <FrameLayout
+        android:layout_width="@dimen/_7sdp"
+        android:layout_height="@dimen/_7sdp"
+        android:background="@drawable/bg_canal_logo_oval"
+        android:padding="@dimen/_1sdp">
+
+        <ImageView
+            android:id="@+id/iv_canal_logo"
+            android:layout_width="@dimen/_6sdp"
+            android:layout_height="@dimen/_6sdp"
+            android:layout_gravity="center"
+            android:contentDescription="Logotipo do canal"
+            android:scaleType="fitCenter" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_canal_nome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_2sdp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_7sdp"
+        android:textStyle="bold" />
+</LinearLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chip de canal no estado FOCADO (controle remoto): fundo destacado + borda clara -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#2EFFFFFF" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/white" />
+    <corners android:radius="12dp" />
+</shape>

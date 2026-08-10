@@ -10,6 +10,10 @@
     <string name="modal_canais_sec_simples">Canais Simples</string>
     <string name="modal_canais_sec_links">Links</string>
 
+    <!-- Modal de detalhes do canal -->
+    <string name="modal_canal_title">Detalhes do Canal</string>
+    <string name="modal_canal_transmissao">Transmissão</string>
+
     <!-- Tabela de classificação -->
     <string name="opcao_classificacao">Tabela</string>
     <string name="classificacao_col_time">Time</string>

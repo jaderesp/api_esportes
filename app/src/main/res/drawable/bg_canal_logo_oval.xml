@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Moldura circular com anel de destaque para o logotipo do canal -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:angle="135"
+        android:endColor="#3D566E"
+        android:startColor="#4A6375" />
+    <stroke
+        android:width="2dp"
+        android:color="#80FFFFFF" />
+</shape>

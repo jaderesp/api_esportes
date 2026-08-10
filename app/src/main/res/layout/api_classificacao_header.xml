@@ -29,7 +29,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:layout_width="@dimen/_14sdp"
+        android:layout_width="@dimen/_16sdp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/classificacao_col_j"
@@ -37,7 +37,7 @@
         android:textSize="@dimen/_7sdp" />
 
     <TextView
-        android:layout_width="@dimen/_14sdp"
+        android:layout_width="@dimen/_16sdp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/classificacao_col_v"
@@ -45,7 +45,7 @@
         android:textSize="@dimen/_7sdp" />
 
     <TextView
-        android:layout_width="@dimen/_14sdp"
+        android:layout_width="@dimen/_16sdp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/classificacao_col_e"
@@ -53,7 +53,7 @@
         android:textSize="@dimen/_7sdp" />
 
     <TextView
-        android:layout_width="@dimen/_14sdp"
+        android:layout_width="@dimen/_16sdp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/classificacao_col_d"
@@ -61,7 +61,7 @@
         android:textSize="@dimen/_7sdp" />
 
     <TextView
-        android:layout_width="@dimen/_18sdp"
+        android:layout_width="@dimen/_20sdp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/classificacao_col_pts"

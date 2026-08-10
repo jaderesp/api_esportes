@@ -26,10 +26,12 @@ import com.diegodev.apidesportes.jogos.adapter.ClassificacaoAdapter;
 import com.diegodev.apidesportes.jogos.adapter.DataAdapter;
 import com.diegodev.apidesportes.jogos.adapter.JogosAdapter;
 import com.diegodev.apidesportes.jogos.dialog.CanaisDialogFragment;
+import com.diegodev.apidesportes.jogos.dialog.CanalDetalheDialogFragment;
 import com.diegodev.apidesportes.jogos.bancoSql.CategoriaDatabase;
 import com.diegodev.apidesportes.jogos.bancoSql.ClassificacaoDatabase;
 import com.diegodev.apidesportes.jogos.bancoSql.JogosDatabase;
 import com.diegodev.apidesportes.jogos.item.DataItem;
+import com.diegodev.apidesportes.jogos.item.ItemCanalLink;
 import com.diegodev.apidesportes.jogos.item.ItemCat;
 import com.diegodev.apidesportes.jogos.item.ItemClassificacao;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
@@ -388,6 +390,10 @@ public class ActivityEsporte extends AppCompatActivity {
             // Ao clicar em um jogo, abre o modal (bottom sheet) com os canais de transmissão.
             myAdapter.setOnItemClickListener(jogo ->
                     CanaisDialogFragment.newInstance(jogo).show(getSupportFragmentManager(), "canais_dialog"));
+            // Ao clicar em um canal (canais_links) da linha do jogo, abre o modal de detalhes.
+            myAdapter.setOnCanalClickListener((jogo, canal) ->
+                    CanalDetalheDialogFragment.newInstance(canal)
+                            .show(getSupportFragmentManager(), "canal_detalhe"));
             listView.setAdapter(myAdapter);
 
         });

@@ -21,10 +21,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.diegodev.apidesportes.R;
+import com.diegodev.apidesportes.jogos.item.ItemCanalLink;
+import com.diegodev.apidesportes.jogos.item.ItemCanalSimples;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
 import com.diegodev.apidesportes.jogos.utils.ImageLoader;
 import com.diegodev.apidesportes.jogos.utils.JogoStatus;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +58,7 @@ public class CanaisDialogFragment extends DialogFragment {
     private static final String ARG_CANAIS_IA = "canais_ia";
     private static final String ARG_CANAIS_SIMPLES = "canais_simples";
     private static final String ARG_CANAIS_LINKS = "canais_links";
+    private static final String ARG_CANAIS_LINKS_JSON = "canais_links_json";
 
     private LinearLayout containerCanais;
 
@@ -71,8 +77,12 @@ public class CanaisDialogFragment extends DialogFragment {
         args.putInt(ARG_GOLS_B, jogo.getGolsB());
         args.putStringArrayList(ARG_CANAIS, toArrayList(jogo.getCanais()));
         args.putStringArrayList(ARG_CANAIS_IA, toArrayList(jogo.getCanaisIa()));
-        args.putStringArrayList(ARG_CANAIS_SIMPLES, toArrayList(jogo.getCanaisSimples()));
-        args.putStringArrayList(ARG_CANAIS_LINKS, toArrayList(jogo.getCanaisLinks()));
+        args.putStringArrayList(ARG_CANAIS_SIMPLES, nomesSimples(jogo.getCanaisSimples()));
+        args.putStringArrayList(ARG_CANAIS_LINKS, nomesLinks(jogo.getCanaisLinks()));
+        // Passa os objetos completos (canais_links) para exibir logotipos no modal.
+        if (jogo.getCanaisLinks() != null && !jogo.getCanaisLinks().isEmpty()) {
+            args.putString(ARG_CANAIS_LINKS_JSON, new Gson().toJson(jogo.getCanaisLinks()));
+        }
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,6 +90,32 @@ public class CanaisDialogFragment extends DialogFragment {
     /** Null-safe: o Bundle não aceita lista vazia como nula. */
     private static ArrayList<String> toArrayList(List<String> list) {
         return list == null ? new ArrayList<>() : new ArrayList<>(list);
+    }
+
+    /** Extrai apenas os nomes dos canais simples (objetos) para exibir no modal. */
+    private static ArrayList<String> nomesSimples(List<ItemCanalSimples> canais) {
+        ArrayList<String> nomes = new ArrayList<>();
+        if (canais != null) {
+            for (ItemCanalSimples canal : canais) {
+                if (canal != null && canal.getChannelName() != null && !canal.getChannelName().trim().isEmpty()) {
+                    nomes.add(canal.getChannelName().trim());
+                }
+            }
+        }
+        return nomes;
+    }
+
+    /** Extrai apenas os nomes dos canais link (objetos) para exibir no modal. */
+    private static ArrayList<String> nomesLinks(List<ItemCanalLink> canais) {
+        ArrayList<String> nomes = new ArrayList<>();
+        if (canais != null) {
+            for (ItemCanalLink canal : canais) {
+                if (canal != null && canal.getChannelName() != null && !canal.getChannelName().trim().isEmpty()) {
+                    nomes.add(canal.getChannelName().trim());
+                }
+            }
+        }
+        return nomes;
     }
 
     @Nullable
@@ -133,17 +169,19 @@ public class CanaisDialogFragment extends DialogFragment {
         }
     }
 
-    /** Monta as seções de canais dentro do ScrollView. */
+    /** Monta as seções de canais dentro do ScrollView. Os canais_links vêm primeiro. */
     private void preencherCanais() {
         Bundle args = getArguments();
         if (args == null) {
             return;
         }
 
-        boolean vazio = adicionarSecao(R.string.modal_canais_sec_tv, args.getStringArrayList(ARG_CANAIS))
-                && adicionarSecao(R.string.modal_canais_sec_ia, args.getStringArrayList(ARG_CANAIS_IA))
+        // Primeiro os canais_links (com logotipo e dados de transmissão),
+        // depois as demais listas simples de nomes.
+        boolean vazio = adicionarSecaoLinks()
                 && adicionarSecao(R.string.modal_canais_sec_simples, args.getStringArrayList(ARG_CANAIS_SIMPLES))
-                && adicionarSecao(R.string.modal_canais_sec_links, args.getStringArrayList(ARG_CANAIS_LINKS));
+                && adicionarSecao(R.string.modal_canais_sec_tv, args.getStringArrayList(ARG_CANAIS))
+                && adicionarSecao(R.string.modal_canais_sec_ia, args.getStringArrayList(ARG_CANAIS_IA));
 
         if (vazio) {
             TextView empty = new TextView(requireContext());
@@ -153,6 +191,62 @@ public class CanaisDialogFragment extends DialogFragment {
             empty.setTextSize(12);
             containerCanais.addView(empty);
         }
+    }
+
+    /**
+     * Adiciona a seção com os canais_links (objeto completo) exibindo
+     * logotipo + nome em chip bonito.
+     * @return true se não havia canais links (para saber se está tudo vazio).
+     */
+    private boolean adicionarSecaoLinks() {
+        Bundle args = getArguments();
+        if (args == null || !args.containsKey(ARG_CANAIS_LINKS_JSON)) {
+            return true;
+        }
+
+        String json = args.getString(ARG_CANAIS_LINKS_JSON);
+        Type type = new TypeToken<List<ItemCanalLink>>() {}.getType();
+        List<ItemCanalLink> links;
+        try {
+            links = new Gson().fromJson(json, type);
+        } catch (Exception e) {
+            return true;
+        }
+        if (links == null || links.isEmpty()) {
+            return true;
+        }
+
+        // Título da seção
+        TextView titulo = new TextView(requireContext());
+        titulo.setText(R.string.modal_canais_sec_links);
+        titulo.setTextColor(getResources().getColor(R.color.modal_section_title));
+        titulo.setTextSize(12);
+        containerCanais.addView(titulo);
+
+        // Um chip (cartão) para cada canal link, com logotipo e nome
+        for (ItemCanalLink canal : links) {
+            if (canal == null) {
+                continue;
+            }
+            TextView chip = new TextView(requireContext());
+            String nome = canal.getChannelName();
+            chip.setText(nome == null || nome.trim().isEmpty() ? "Canal" : nome.trim());
+            chip.setTextColor(getResources().getColor(R.color.white));
+            chip.setTextSize(14);
+            chip.setGravity(Gravity.CENTER);
+            chip.setPadding(dp(10), dp(8), dp(10), dp(8));
+            chip.setBackgroundResource(R.drawable.bg_canal_chip);
+            chip.setFocusable(true); // foco com controle remoto (TV)
+            containerCanais.addView(chip);
+        }
+
+        // Espaço entre seções
+        View espaco = new View(requireContext());
+        espaco.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(4)));
+        containerCanais.addView(espaco);
+
+        return false;
     }
 
     /**

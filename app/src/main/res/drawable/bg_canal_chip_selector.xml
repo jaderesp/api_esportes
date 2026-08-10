@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selector do chip de canal: destaca com gradiente azul quando focado (TV). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:drawable="@drawable/bg_canal_chip_faixa_foco" />
+    <item android:state_selected="true" android:drawable="@drawable/bg_canal_chip_faixa_foco" />
+    <item android:drawable="@drawable/bg_canal_chip_faixa" />
+</selector>

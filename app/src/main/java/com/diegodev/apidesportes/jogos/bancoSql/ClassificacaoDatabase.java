@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.diegodev.apidesportes.jogos.item.ItemClassificacao;
 
 /** Cache local da tabela de classificação. Mesmo padrão do JogosDatabase. */
-@Database(entities = {ItemClassificacao.class}, version = 1)
+@Database(entities = {ItemClassificacao.class}, version = 2)
 public abstract class ClassificacaoDatabase extends RoomDatabase {
 
     private static volatile ClassificacaoDatabase INSTANCE;

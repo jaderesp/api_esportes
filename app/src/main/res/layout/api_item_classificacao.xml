@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Linha da tabela de classificação. Focável para navegação com controle (TV). -->
+<!-- Linha da tabela de classificação. Cada coluna de estatística mostra a sigla
+     (J, V, E, D, Pts) acima do número, para o usuário entender o dado sem
+     depender do cabeçalho fixo. Focável para navegação com controle (TV). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_32sdp"
+    android:layout_height="@dimen/_42sdp"
     android:layout_marginTop="@dimen/_3sdp"
     android:background="@drawable/sport_selector"
     android:focusable="true"
@@ -11,6 +13,12 @@
     android:orientation="horizontal"
     android:paddingStart="@dimen/_6sdp"
     android:paddingEnd="@dimen/_6sdp">
+
+    <View
+        android:id="@+id/vPromoStripe"
+        android:layout_width="@dimen/_4sdp"
+        android:layout_height="match_parent"
+        android:background="#00000000" />
 
     <TextView
         android:id="@+id/tvPosicao"
@@ -39,44 +47,124 @@
         android:textColor="@color/white"
         android:textSize="@dimen/_8sdp" />
 
-    <TextView
-        android:id="@+id/tvJogos"
-        android:layout_width="@dimen/_14sdp"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:textColor="#DBDBDB"
-        android:textSize="@dimen/_7sdp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvVitorias"
-        android:layout_width="@dimen/_14sdp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="#DBDBDB"
-        android:textSize="@dimen/_7sdp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/classificacao_col_j"
+            android:textColor="@color/modal_text_secondary"
+            android:textSize="@dimen/_4sdp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvEmpates"
-        android:layout_width="@dimen/_14sdp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="#DBDBDB"
-        android:textSize="@dimen/_7sdp" />
+        <TextView
+            android:id="@+id/tvJogos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:gravity="center"
+            android:textColor="#DBDBDB"
+            android:textSize="@dimen/_7sdp" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvDerrotas"
-        android:layout_width="@dimen/_14sdp"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:textColor="#DBDBDB"
-        android:textSize="@dimen/_7sdp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvPontos"
-        android:layout_width="@dimen/_18sdp"
-        android:layout_height="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/classificacao_col_v"
+            android:textColor="@color/modal_text_secondary"
+            android:textSize="@dimen/_4sdp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvVitorias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:gravity="center"
+            android:textColor="#DBDBDB"
+            android:textSize="@dimen/_7sdp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_8sdp"
-        android:textStyle="bold" />
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/classificacao_col_e"
+            android:textColor="@color/modal_text_secondary"
+            android:textSize="@dimen/_4sdp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvEmpates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:gravity="center"
+            android:textColor="#DBDBDB"
+            android:textSize="@dimen/_7sdp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/classificacao_col_d"
+            android:textColor="@color/modal_text_secondary"
+            android:textSize="@dimen/_4sdp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDerrotas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:gravity="center"
+            android:textColor="#DBDBDB"
+            android:textSize="@dimen/_7sdp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/classificacao_col_pts"
+            android:textColor="@color/modal_text_secondary"
+            android:textSize="@dimen/_4sdp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvPontos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_8sdp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>

@@ -23,12 +23,15 @@ Integra dados de jogos, campeonatos e placares da API **Futebols**:
   - `jogos/bancoSql/` — Room/SQLite (cache local: `JogosDatabase`, `CategoriaDatabase`)
   - `jogos/adapter/`, `jogos/item/`, `jogos/callback/`, `jogos/dialog/`, `jogos/utils/`
   - `jogos/callback/na.java` + `dja.java` — decriptação nativa da URL base (AES/CBC + JNI)
-- `jogos/dialog/CanaisDialogFragment.java` — modal (bottom sheet) de canais de transmissão; aberto ao clicar num jogo (ver `docs/CANAIS_TRANSMISSAO.md`)
+- `jogos/dialog/CanaisDialogFragment.java` — modal (bottom sheet) com **todas** as seções de canais de transmissão (Links, Simples, TV, IA); aberto ao clicar na linha do jogo (ver `docs/CANAIS_TRANSMISSAO.md`)
+- `jogos/dialog/CanalDetalheDialogFragment.java` — modal (bottom sheet) com os detalhes de um canal link (logo, nome, servidor, transmission_url); aberto ao clicar em um chip da faixa da linha do jogo
+- `jogos/item/ItemCanalSimples.java` + `jogos/item/ItemCanalLink.java` — objetos de `canais_simples`/`canais_links` da API (não são mais listas de strings)
 - `jogos/item/ItemClassificacao.java` + `jogos/response/ApiClassificacaoCaller.java` + `jogos/bancoSql/ClassificacaoDatabase.java` — tabela de classificação (`GET /api/campeonato/{id}/classificacao`); opção "Tabela" aparece acima de "HOJE" ao selecionar um campeonato (ver `docs/CLASSIFICACAO.md`)
   - `cpp/api_esportes.cpp` — proteção/ofuscação da URL (JNI); `verificarUrlNativa` faz `exit(0)` se o host não for o esperado
   - `jniLibs/` — `.so` **pré-compilados** por ABI (arm64-v8a, armeabi-v7a, x86, x86_64)
-  - `res/layout/` — `frame_esportes.xml` (tela principal), `api_category`, `api_item_jogos`, `api_item_data`, `api_item_camp`, `api_expired`
+  - `res/layout/` — `frame_esportes.xml` (tela principal), `api_category`, `api_item_jogos`, `api_item_canal_linha` (chip da faixa), `api_item_data`, `api_item_camp`, `api_expired`
   - `res/raw/` — animações Lottie (`.json`)
+- `app/src/main/AndroidManifest.xml` — biblioteca com `usesCleartextTraffic="true"` (logotipos de canais usam `http://`)
 - `demo/` — módulo de **aplicação** criado para teste em aparelho real (instalável)
   - `MainActivity` salva token em `SharedPreferences` `ApiEsporteBrPrefs` (chave `token`) e abre `ActivityEsporte`
 - `docs/` — documentação e este arquivo
@@ -56,6 +59,10 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 - Abrir: `adb shell am start -n com.diegodev.apidesportes.demo/.MainActivity`
 - Emulador disponível: AVD `Medium_Phone_API_36.1`
 - Celular usado nos testes: Samsung `SM_G990E` (adb serial `RQCW504BWSK`)
+- **Android TV usada nos testes da faixa de canais:** `192.168.3.14:5555` (sempre usar `-s 192.168.3.14:5555`; há outro device `RQCW504BWSK` **unauthorized** — nunca instalar sem `-s`):
+  - Instalar: `& "C:\Users\jmsof\AppData\Local\Android\Sdk\platform-tools\adb.exe" -s 192.168.3.14:5555 install -r demo\build\outputs\apk\debug\demo-debug.apk`
+  - Abrir: `adb -s 192.168.3.14:5555 shell am start -n com.diegodev.apidesportes.demo/.MainActivity`
+  - Verificar processo: `adb -s 192.168.3.14:5555 shell "pidof com.diegodev.apidesportes.demo"`
 
 ## Mudanças de layout/source e atualização dos clientes
 
@@ -78,14 +85,18 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
   - **JSON real (camp 1957, Brasileiro Série A):** array de objetos com `time_nome` no nível superior (snake_case). A API **não retorna logo/escudo** — placeholder `ic_time_placeholder` (escudo genérico) no `ClassificacaoAdapter` via `ImageLoader.load(..., placeholderRes)`.
   - **Corrida de leitura corrigida:** `buscarClassificacao` chama `limparPorCamp(campId)` **antes** de disparar a busca + polling, para a tela não exibir linhas antigas (ex.: sem nome) do cache Room.
   - **Fontes da tabela reajustadas:** cabeçalho/colunas `_7sdp`, posição `_8sdp`, altura da linha `_32sdp`.
-- **Implementado modal de canais de transmissão** (clique no jogo → bottom sheet):
-  - `ItemJogos` ganhou os campos `canais`, `canais_ia`, `canais_simples`, `canais_links` (`List<String>`).
-  - `JogosDatabase` versão 1 → **2** + `Converters.java` (Room salva `List<String>` como JSON; usa `fallbackToDestructiveMigration`, cache antigo é apagado).
-  - `CanaisDialogFragment` + layout `dialog_canais_jogos.xml`.
-  - `JogosAdapter` com `setOnItemClickListener`; `ActivityEsporte` abre o modal.
-  - Novos utils compartilhados: `JogoStatus` (status/placar) e `ImageLoader` (logos URL/base64).
+- **Implementados os canais de transmissão** (modal + faixa na lista):
+  - `ItemJogos` tem os campos `canais`, `canais_ia` (`List<String>`) e `canais_simples`, `canais_links` (`List<ItemCanalSimples>`/`List<ItemCanalLink>` — **objetos**, não strings).
+  - **Causa raiz corrigida:** a API usa **snake_case** (`canais_links`, `canais_simples`, `canais_ia`, `canais`); sem `@SerializedName` o Gson deixava os campos `null` (nada aparecia). Adicionados os `@SerializedName` em `ItemJogos` e nos novos models.
+  - `JogosDatabase` versão 1 → **3** + `Converters.java` (Room salva `List<T>` como JSON; usa `fallbackToDestructiveMigration`, cache antigo é apagado).
+  - **Faixa de chips na linha do jogo** (apenas `canais_links`): `JogosAdapter.preencherCanais()` + `inflarChip()`; layout `api_item_canal_linha.xml` (logo `iv_canal_logo` + nome `tv_canal_nome`) dentro de `HorizontalScrollView` em `api_item_jogos.xml`. Interfaces `OnItemClickListener` (jogo) e `OnCanalClickListener` (chip).
+  - **CanalDetalheDialogFragment** + `dialog_canal_detalhe.xml`: modal de detalhes do canal (logo, nome, servidor, transmission_url).
+  - `CanaisDialogFragment`: reordenado para exibir a seção `Links` **primeiro** (objetos via `ARG_CANAIS_LINKS_JSON`, Gson `TypeToken<List<ItemCanalLink>>`), depois Simples → TV → IA; vazio → "Nenhum canal informado".
+  - `AndroidManifest.xml` da biblioteca: `usesCleartextTraffic="true"` (logos de canal em `http://`).
+  - Design da faixa: `bg_canal_chip_faixa*`, `bg_canal_chip_selector`, `bg_canal_logo_oval` (drawables). Fonte do nome do canal atualmente `_7sdp` (aumentada 250% sobre `_2sdp`, decisão do usuário).
+  - Novo utils `JogoStatus` (status/placar) e `ImageLoader` (logos URL/base64).
+  - Testado na **Android TV `192.168.3.14`**: Build (`.\gradlew.bat :demo:assembleDebug --console=plain -q`), install (`adb -s 192.168.3.14:5555 install -r ...`), e verificação no Room da TV (`run-as com.diegodev.apidesportes.demo cat databases/jogos.db`): 232 jogos; **1** com `canais_links` real (jogo `229020` Goiás x Londrina, canal "Disney + 1", transmission_url `https://api.systemupdate.vip/live/teste11/5555z/78956.m3u8`, start `2026-08-10T22:30:00.000Z`); 46 com `canais_simples` reais; `[]` demais.
   - **Documentação detalhada:** `docs/CANAIS_TRANSMISSAO.md`.
-  - Obs.: campos modelados como arrays de strings; se a API mudar para objetos, ajustar `ItemJogos`/`Converters` (ver doc).
 - Pendente decisão do usuário: configurar `externalNativeBuild` do CMake.
 
 ## Observações técnicas
