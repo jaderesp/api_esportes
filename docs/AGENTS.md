@@ -54,6 +54,10 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 - `local.properties` foi criado localmente (não versionar): `sdk.dir=C\:\\Users\\jmsof\\AppData\\Local\\Android\\Sdk`
 - Build da biblioteca: `.\gradlew.bat :app:assembleDebug`
 - Build do app demo: `.\gradlew.bat :demo:assembleDebug`
+- **Token de testes do demo (NUNCA versionar no repositório):** lido no build pela variável de ambiente `FUTEBOLS_TOKEN` e injetado no `BuildConfig` do demo (`demo/build.gradle.kts`). No Windows:
+  `$env:FUTEBOLS_TOKEN="SEU_TOKEN"; .\gradlew.bat :demo:assembleDebug`
+  - Com a variável vazia/sem ela, o campo de token abre em branco no app demo e o token pode ser colado manualmente.
+  - Segredo/senha e afins também não devem ser commitados.
 - Instalar no celular (adb não está no PATH — usar caminho completo):
   `& "C:\Users\jmsof\AppData\Local\Android\Sdk\platform-tools\adb.exe" install -r demo\build\outputs\apk\debug\demo-debug.apk`
 - Abrir: `adb shell am start -n com.diegodev.apidesportes.demo/.MainActivity`

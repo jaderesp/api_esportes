@@ -216,7 +216,11 @@ Para atualizar o SDK no seu app:
   todas as secoes (Links, Simples, TV, IA) e clicar em um chip abre os
   **detalhes do canal** (logo, servidor e URL de transmissao). Detalhes em `docs/CANAIS_TRANSMISSAO.md`.
 - **Tabela de classificacao:** ao selecionar um campeonato, aparece a opcao "Tabela" acima de "HOJE" exibindo a classificacao completa. Detalhes em `docs/CLASSIFICACAO.md`.
-- Novo modulo `demo/` para testes em aparelho real/TV.
+- Novo modulo `demo/` para testes em aparelho real/TV. O token de testes e
+  injetado no build pela variavel de ambiente `FUTEBOLS_TOKEN`
+  (ex.: `$env:FUTEBOLS_TOKEN="SEU_TOKEN"; .\gradlew.bat :demo:assembleDebug` no
+  Windows) — **nunca** versione o token no repositorio; sem a variavel o campo
+  de token abre em branco para colagem manual.
 
 ## 1) Requisitos
 

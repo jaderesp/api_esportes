@@ -13,6 +13,15 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        // Token de testes injetado via variável de ambiente FUTEBOLS_TOKEN.
+        // Nunca versionar o token no repositório.
+        val futebolsToken: String = System.getenv("FUTEBOLS_TOKEN").orEmpty()
+        buildConfigField("String", "FUTEBOLS_TOKEN", "\"" + futebolsToken.replace("\"", "\\\"") + "\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
