@@ -27,6 +27,7 @@ import com.diegodev.apidesportes.jogos.adapter.DataAdapter;
 import com.diegodev.apidesportes.jogos.adapter.JogosAdapter;
 import com.diegodev.apidesportes.jogos.dialog.CanaisDialogFragment;
 import com.diegodev.apidesportes.jogos.dialog.CanalDetalheDialogFragment;
+import com.diegodev.apidesportes.jogos.event.EsporteEventListener;
 import com.diegodev.apidesportes.jogos.bancoSql.CategoriaDatabase;
 import com.diegodev.apidesportes.jogos.bancoSql.ClassificacaoDatabase;
 import com.diegodev.apidesportes.jogos.bancoSql.JogosDatabase;
@@ -387,9 +388,12 @@ public class ActivityEsporte extends AppCompatActivity {
             lisvazia.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             JogosAdapter myAdapter = new JogosAdapter(this, itemJogos);
-            // Ao clicar em um jogo, abre o modal (bottom sheet) com os canais de transmissão.
-            myAdapter.setOnItemClickListener(jogo ->
-                    CanaisDialogFragment.newInstance(jogo).show(getSupportFragmentManager(), "canais_dialog"));
+            // Ao clicar em um jogo, abre o modal (bottom sheet) com os canais de transmissão
+            // e notifica o app consumidor (EsporteEventListener) se houver listener registrado.
+            myAdapter.setOnItemClickListener(jogo -> {
+                CanaisDialogFragment.newInstance(jogo).show(getSupportFragmentManager(), "canais_dialog");
+                EsporteEventListener.notificarJogoClicado(jogo);
+            });
             // Ao clicar em um canal (canais_links) da linha do jogo, abre o modal de detalhes.
             myAdapter.setOnCanalClickListener((jogo, canal) ->
                     CanalDetalheDialogFragment.newInstance(canal)

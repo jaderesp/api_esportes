@@ -25,6 +25,7 @@ Integra dados de jogos, campeonatos e placares da API **Futebols**:
   - `jogos/callback/na.java` + `dja.java` — decriptação nativa da URL base (AES/CBC + JNI)
 - `jogos/dialog/CanaisDialogFragment.java` — modal (bottom sheet) com **todas** as seções de canais de transmissão (Links, Simples, TV, IA); aberto ao clicar na linha do jogo (ver `docs/CANAIS_TRANSMISSAO.md`)
 - `jogos/dialog/CanalDetalheDialogFragment.java` — modal (bottom sheet) com os detalhes de um canal link (logo, nome, servidor, transmission_url); aberto ao clicar em um chip da faixa da linha do jogo
+- `jogos/event/EsporteEventListener.java` — **evento para o app consumidor**: holder estático + interface `EsporteEventCallback` (`onJogoClicado(ItemJogos)`); disparado no clique da linha do jogo em `ActivityEsporte.setList()` junto com a abertura do modal; registro via `setListener(...)` antes do `startActivity`; limpeza com `clear()` (ver `docs/EVENT_LISTENER.md`)
 - `jogos/item/ItemCanalSimples.java` + `jogos/item/ItemCanalLink.java` — objetos de `canais_simples`/`canais_links` da API (não são mais listas de strings)
 - `jogos/item/ItemClassificacao.java` + `jogos/response/ApiClassificacaoCaller.java` + `jogos/bancoSql/ClassificacaoDatabase.java` — tabela de classificação (`GET /api/campeonato/{id}/classificacao`); opção "Tabela" aparece acima de "HOJE" ao selecionar um campeonato (ver `docs/CLASSIFICACAO.md`)
   - `cpp/api_esportes.cpp` — proteção/ofuscação da URL (JNI); `verificarUrlNativa` faz `exit(0)` se o host não for o esperado
@@ -75,6 +76,11 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 
 ## Estado atual (última sessão)
 
+- **Implementado o Event Listener** (solicitação de cliente que consome o SDK via importação; decisões: clique na **linha do jogo** entrega **todos** os `canais_links`; manter o modal interno; entrega via **callback estático**):
+  - Novo `jogos/event/EsporteEventListener.java` — `setListener(EsporteEventCallback)` / `clear()` / `notificarJogoClicado(ItemJogos)`. Callback na thread principal.
+  - `ActivityEsporte.setList()` — `setOnItemClickListener` agora também chama `EsporteEventListener.notificarJogoClicado(jogo)` após abrir o modal (clientes sem listener mantêm o comportamento antigo).
+  - Documentação completa para o cliente: `docs/EVENT_LISTENER.md` + seção no `README.md` (Passo 4) + entrada "1.3" em Novidades por versão.
+  - **Pendente:** publicar tag `1.3` para o cliente receber o recurso (JitPack).
 - Criado módulo `demo/` (app host para teste):
   - `settings.gradle.kts` — adicionado `include(":demo")`
   - `demo/build.gradle.kts`, manifest, `MainActivity.java`, layout, strings, `demo/.gitignore` (`/build`)

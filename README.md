@@ -28,6 +28,29 @@
 
 ---
 
+## Documentacao — Indice
+
+Guia principal para desenvolvedores, clientes e mantenedores do SDK:
+
+### Para quem consome o SDK (clientes)
+
+- **[Event Listener — Integracao com o app consumidor](docs/EVENT_LISTENER.md)**
+  Acompanhe os cliques nos jogos dentro do SDK e receba os dados de transmissao
+  (`canais_links`) para reproduzir no seu proprio player.
+- **[Canais de Transmissao](docs/CANAIS_TRANSMISSAO.md)**
+  Como funcionam a faixa de canais na lista e os modais de canais (Links, Simples, TV, IA).
+- **[Tabela de Classificacao](docs/CLASSIFICACAO.md)**
+  Como funciona a opcao "Tabela" (classificacao por campeonato).
+
+### Para quem mantem o SDK (manutencao/continuidade)
+
+- **[AGENTS.md](docs/AGENTS.md)** — contexto completo do projeto, estrutura,
+  build, teste em aparelhos e estado atual da ultima sessao.
+- **[Documentacao da API Futebols (Postman)](https://documenter.getpostman.com/view/8125887/2sB2qWHQLS#baaf4a18-cd83-4ca6-854f-b70c555e616e)**
+  Referencia dos endpoints utilizados pelo SDK.
+
+---
+
 ## O que e este repositorio?
 
 Este projeto e um **SDK Android** (modulo de biblioteca) para exibir:
@@ -38,7 +61,9 @@ Este projeto e um **SDK Android** (modulo de biblioteca) para exibir:
 - placares e logos dos times;
 - filtros por data e campeonato;
 - canais de transmissao de cada jogo (faixa de chips na lista + modal);
-- tabela de classificacao dos campeonatos.
+- tabela de classificacao dos campeonatos;
+- **evento de clique (Event Listener)** para o app consumidor acompanhar os
+  jogos clicados e reproduzir com os dados de transmissao (`canais_links`).
 
 Em resumo: ele facilita colocar uma tela de esportes pronta dentro do seu app.
 
@@ -186,6 +211,23 @@ dependencies {
 
 Veja as secoes **"Salvar token antes de abrir a tela"** e **"Abrir a tela de esportes"** abaixo.
 
+### Passo 4 — Escutar o clique nos jogos (Event Listener) *(opcional)*
+
+Quer que o seu app seja **avisado quando o usuario clicar em um jogo** dentro do
+SDK, recebendo o jogo completo com os canais de `canais_links`
+(incluindo a `transmission_url`) para **reproduzir no seu proprio player**?
+
+Registre um listener **antes** de abrir a `ActivityEsporte`:
+
+```java
+EsporteEventListener.setListener(jogo -> {
+    // jogo.getCanaisLinks() → List<ItemCanalLink> com nome, logo, servidor e URL
+});
+```
+
+Guia completo (fluxo, payload, exemplos Java/Kotlin, limpeza) em
+[`docs/EVENT_LISTENER.md`](docs/EVENT_LISTENER.md).
+
 ---
 
 ## Como receber atualizacoes do SDK (tags e versoes)
@@ -209,7 +251,18 @@ Para atualizar o SDK no seu app:
 
 ### Novidades por versao
 
-**1.2** (atual):
+**1.3** (atual):
+
+- **Event Listener:** o SDK agora emite um **evento para o app consumidor**
+  quando o usuario clica na **linha de um jogo**, entregando o jogo completo com
+  todos os canais de `canais_links` (nome, logo, servidor e `transmission_url`)
+  para o app reproduzir no proprio player. Registro via
+  `EsporteEventListener.setListener(...)` **antes** de abrir a `ActivityEsporte`
+  (o callback roda na thread principal; use `clear()` quando nao precisar mais).
+  O modal interno de canais continua abrindo como antes; clientes sem listener
+  nao mudam de comportamento. Detalhes em `docs/EVENT_LISTENER.md`.
+
+**1.2**:
 
 - **Canais de transmissao:** cada jogo com `canais_links` mostra uma **faixa de
   chips** (logotipo + nome) abaixo da linha; clicar na linha abre o **modal** com
