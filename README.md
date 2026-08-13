@@ -258,7 +258,7 @@ Para atualizar o SDK no seu app:
   todos os canais de `canais_links` (nome, logo, servidor e `transmission_url`) via
   `EsporteEventListener.setListener(...)`. E quando o usuario clica em um **canal**
   dentro do modal de canais, entrega o **`stream_id`** (int) via
-  `EsporteEventListener.definirAoClicarNoCanalListener(...)` (callback com retorno
+  `EsporteEventListener.onChannelClickListener(...)` (callback com retorno
   `boolean`: `true` = o app consumiu o clique; `idCanal` é int primitivo, fixo e
   unico; sem ID o evento nao dispara — nunca envia 0/-1; sempre na UI thread).
   O helper `tabelaIdParaNome(...)` traduz o ID de volta para o nome do canal.

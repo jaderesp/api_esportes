@@ -219,7 +219,7 @@ Recomendação: registre o listener na Activity que inicia o SDK e chame
 
 | Arquivo | Papel |
 |---|---|
-| `app/src/main/java/com/diegodev/apidesportes/jogos/event/EsporteEventListener.java` | Holder estático dos listeners (`EsporteEventCallback` + `AoClicarNoCanalListener`), `setListener`/`definirAoClicarNoCanalListener`/`clear`, `notificarJogoClicado`/`notificarCanalClicado` e helper `tabelaIdParaNome`. |
+| `app/src/main/java/com/diegodev/apidesportes/jogos/event/EsporteEventListener.java` | Holder estático dos listeners (`EsporteEventCallback` + `AoClicarNoCanalListener`), `setListener`/`onChannelClickListener`/`clear`, `notificarJogoClicado`/`notificarCanalClicado` e helper `tabelaIdParaNome`. |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/ActivityEsporte.java` | `setList()`: chama `EsporteEventListener.notificarJogoClicado(jogo)` junto com a abertura do modal. |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/adapter/JogosAdapter.java` | Dispara `onItemClickListener` no clique da linha (origem do evento). |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/dialog/CanaisDialogFragment.java` | Chips da seção "Links" notificam `notificarCanalClicado(stream_id)` no clique (só com ID válido). |
@@ -241,7 +241,7 @@ para o app reproduzir/redirecionar no próprio player.
 **Java**
 
 ```java
-EsporteEventListener.definirAoClicarNoCanalListener(idCanal -> {
+EsporteEventListener.onChannelClickListener(idCanal -> {
     // idCanal = stream_id do canal clicado (int)
     abrirPlayerPorStreamId(idCanal); // seu app decide
     return true;  // true = app consumiu o clique
@@ -251,7 +251,7 @@ EsporteEventListener.definirAoClicarNoCanalListener(idCanal -> {
 **Kotlin**
 
 ```kotlin
-EsporteEventListener.definirAoClicarNoCanalListener { idCanal ->
+EsporteEventListener.onChannelClickListener { idCanal ->
     abrirPlayerPorStreamId(idCanal) // seu app decide
     true // true = app consumiu o clique
 }
@@ -287,7 +287,7 @@ Map<Integer, String> tabela = EsporteEventListener.tabelaIdParaNome(jogo.getCana
 // tabela.get(idCanal)  → ex.: 44043 → "Paramount+ 1 FHD"
 
 // No callback de canal:
-EsporteEventListener.definirAoClicarNoCanalListener(idCanal -> {
+EsporteEventListener.onChannelClickListener(idCanal -> {
     String nome = tabela.get(idCanal);   // nome do canal correspondente
     abrirPlayerPorStreamId(idCanal, nome);
     return true;
@@ -298,7 +298,7 @@ EsporteEventListener.definirAoClicarNoCanalListener(idCanal -> {
 
 ```kotlin
 val tabela = EsporteEventListener.tabelaIdParaNome(jogo.canaisLinks)
-EsporteEventListener.definirAoClicarNoCanalListener { idCanal ->
+EsporteEventListener.onChannelClickListener { idCanal ->
     val nome = tabela[idCanal]
     abrirPlayerPorStreamId(idCanal, nome)
     true

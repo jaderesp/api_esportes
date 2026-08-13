@@ -112,7 +112,7 @@ public final class EsporteEventListener {
      * @param listener callback a ser notificado no clique de um canal; passe
      *                 {@code null} para remover.
      */
-    public static void definirAoClicarNoCanalListener(@Nullable AoClicarNoCanalListener listener) {
+    public static void onChannelClickListener(@Nullable AoClicarNoCanalListener listener) {
         canalListener = listener;
     }
 
