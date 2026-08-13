@@ -87,6 +87,11 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
   - **Regras atendidas (pedido do cliente):** `idCanal` é `int` **primitivo**, **fixo e único** por canal (é o `stream_id`, nunca posição na lista nem nome do botão); **sem ID → não dispara**; callback **sempre na UI thread** (o `notificarCanalClicado` garante via `Handler(Looper.getMainLooper())` quando chamado fora da main); helper público `tabelaIdParaNome(List<ItemCanalLink>)` → `Map<Integer,String>` (stream_id → channel_name) para o app traduzir o ID de volta ao nome.
   - `CanaisDialogFragment.adicionarSecaoLinks()` — cada chip de Link tem `setOnClickListener` → só notifica `EsporteEventListener.notificarCanalClicado(stream_id)` se `getStreamId() != null`.
   - **Publicado na tag `1.3`** (mesma branch `feature/classificacao-canais`; a `1.2` ficou com build antigo no JitPack).
+- **Novas necessidades do cliente implementadas (pedido do programador do cliente):**
+  1. **Encerrar o SDK ao clicar em um canal:** o chip da seção "Links" notifica `notificarCanalClicado(stream_id)` e, se houver listener de canal registrado, encerra a tela com `requireActivity().finish()` (novo método `EsporteEventListener.possuiListenerDeCanal()`). Sem listener, o modal continua aberto como antes. O encerramento independe do retorno (`true`/`false`) do callback — depende da **existência** do listener.
+  2. **Feedback de foco nos chips do modal (TV):** novo drawable `bg_canal_chip_selector_modal.xml` (normal = `bg_canal_chip`, focado/selecionado/pressionado = `bg_canal_chip_foco`); aplicado em **todas** as seções do modal (Links, Simples, TV, IA).
+  3. **Logotipo do canal nos chips:** o chip da seção Links virou um `LinearLayout` horizontal com `ImageView` (logo) + `TextView` (nome); o logo só é exibido quando `channel_logo` não é vazio, carregado via `ImageLoader`.
+  - Doc `EVENT_LISTENER.md` atualizada (seções 8 e 9) com o encerramento, foco e logotipo.
 - Criado módulo `demo/` (app host para teste):
   - `settings.gradle.kts` — adicionado `include(":demo")`
   - `demo/build.gradle.kts`, manifest, `MainActivity.java`, layout, strings, `demo/.gitignore` (`/build`)

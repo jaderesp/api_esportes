@@ -106,14 +106,28 @@ public final class EsporteEventListener {
         canalListener = null;
     }
 
-    /**
-     * Registra o listener que receberá os cliques em canais de transmissão.
+/**
+     * (SDK interno) Registra o listener que receberá os cliques em canais de transmissão.
      *
      * @param listener callback a ser notificado no clique de um canal; passe
      *                 {@code null} para remover.
      */
     public static void onChannelClickListener(@Nullable AoClicarNoCanalListener listener) {
         canalListener = listener;
+    }
+
+    /**
+     * (SDK interno) Informa se há um listener de canal registrado.
+     *
+     * <p>O modal de canais usa este método para decidir se deve encerrar a tela
+     * do SDK ao clicar em um canal: só encerra quando o app consumidor está
+     * ouvindo o evento (e pode assumir a transmissão). Se não houver listener,
+     * o clique apenas mantém o modal aberto.</p>
+     *
+     * @return true se um {@code AoClicarNoCanalListener} foi registrado.
+     */
+    public static boolean possuiListenerDeCanal() {
+        return canalListener != null;
     }
 
     /**

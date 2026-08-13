@@ -224,26 +224,53 @@ public class CanaisDialogFragment extends DialogFragment {
         titulo.setTextSize(12);
         containerCanais.addView(titulo);
 
-        // Um chip (cartão) para cada canal link, com logotipo e nome
+        // Um chip (cartão) para cada canal link, com logotipo (se existir) e nome
         for (ItemCanalLink canal : links) {
             if (canal == null) {
                 continue;
             }
-            TextView chip = new TextView(requireContext());
-            String nome = canal.getChannelName();
-            chip.setText(nome == null || nome.trim().isEmpty() ? "Canal" : nome.trim());
-            chip.setTextColor(getResources().getColor(R.color.white));
-            chip.setTextSize(14);
-            chip.setGravity(Gravity.CENTER);
+            // Chip é um container horizontal: logo (se houver) + nome.
+            LinearLayout chip = new LinearLayout(requireContext());
+            chip.setOrientation(LinearLayout.HORIZONTAL);
+            chip.setGravity(Gravity.CENTER_VERTICAL);
             chip.setPadding(dp(10), dp(8), dp(10), dp(8));
-            chip.setBackgroundResource(R.drawable.bg_canal_chip);
+            chip.setBackgroundResource(R.drawable.bg_canal_chip_selector_modal);
             chip.setFocusable(true); // foco com controle remoto (TV)
-            // Clique no canal: notifica o app consumidor com o stream_id.
-            // Se o app consumir (true), o SDK não executa ação padrão.
+
+            String nome = canal.getChannelName();
+            String nomeExibicao = nome == null || nome.trim().isEmpty() ? "Canal" : nome.trim();
+
+            // Logo do canal: só é exibida quando a API informa channel_logo.
+            String logo = canal.getChannelLogo();
+            if (logo != null && !logo.trim().isEmpty()) {
+                ImageView ivLogo = new ImageView(requireContext());
+                int logoSize = dp(20);
+                LinearLayout.LayoutParams logoParams =
+                        new LinearLayout.LayoutParams(logoSize, logoSize);
+                logoParams.setMarginEnd(dp(8));
+                ivLogo.setLayoutParams(logoParams);
+                ivLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                ImageLoader.load(requireContext(), logo.trim(), ivLogo);
+                chip.addView(ivLogo);
+            }
+
+            TextView tvNome = new TextView(requireContext());
+            tvNome.setText(nomeExibicao);
+            tvNome.setTextColor(getResources().getColor(R.color.white));
+            tvNome.setTextSize(14);
+            tvNome.setGravity(Gravity.CENTER);
+            chip.addView(tvNome);
+
+            // Clique no canal: notifica o app consumidor com o stream_id e, se o
+            // app estiver ouvindo o evento, encerra a tela do SDK (requireActivity
+            // .finish()) para o app assumir a transmissão.
             // Sem stream_id válido o evento NÃO é disparado (nunca envia 0/-1).
             chip.setOnClickListener(v -> {
                 if (canal.getStreamId() != null) {
                     EsporteEventListener.notificarCanalClicado(canal.getStreamId());
+                    if (EsporteEventListener.possuiListenerDeCanal()) {
+                        requireActivity().finish();
+                    }
                 }
             });
             containerCanais.addView(chip);
@@ -285,7 +312,7 @@ public class CanaisDialogFragment extends DialogFragment {
             chip.setTextSize(14);
             chip.setGravity(Gravity.CENTER);
             chip.setPadding(dp(10), dp(8), dp(10), dp(8));
-            chip.setBackgroundResource(R.drawable.bg_canal_chip);
+            chip.setBackgroundResource(R.drawable.bg_canal_chip_selector_modal);
             chip.setFocusable(true); // foco com controle remoto (TV)
             containerCanais.addView(chip);
         }
