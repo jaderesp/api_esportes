@@ -5,7 +5,7 @@ Guia completo para o **app que consome o SDK** receber, em tempo real, os
 do jogo "Palmeiras x Flamengo") e **consumir os dados retornados** (jogo +
 canais de transmissão) para redirecionar/reproduzir no próprio app.
 
-> Disponível a partir da **versão 1.3** do SDK.
+> Disponível a partir da **versão 1.2** do SDK.
 
 ---
 
@@ -205,7 +205,7 @@ Recomendação: registre o listener na Activity que inicia o SDK e chame
 | Situação | Como resolver |
 |---|---|
 | Nada é chamado no clique. | Verifique se `setListener(...)` foi chamado **antes** do `startActivity` da `ActivityEsporte`. |
-| Tela aberta, callback nunca dispara. | Confirme que o app subiu para a **versão 1.3+** da dependência e fez `Sync`/rebuild. |
+| Tela aberta, callback nunca dispara. | Confirme que o app subiu para a **versão 1.2+** da dependência e fez `Sync`/rebuild. |
 | `getCanaisLinks()` vazio. | Jogo sem canal de transmissão — normal. Trate como "sem canal". |
 | Quer a URL direto na linha. | Use `canais.get(0).getTransmissionUrl()` no callback (evento por canal em chip é uma evolução futura). |
 
@@ -224,7 +224,7 @@ Recomendação: registre o listener na Activity que inicia o SDK e chame
 
 ## 9) Observação sobre versão (JitPack)
 
-Este recurso só chega ao app do cliente após **publicar uma nova tag** do
-repositório (ex.: `1.3`) e o cliente **subir a versão da dependência**:
-`com.github.jaderesp:api_esportes:1.3`. Consultar mais em
+Este recurso está publicado na **tag `1.2`** do repositório (`jaderesp/api_esportes`).
+O cliente recebe após **subir a versão da dependência**:
+`com.github.jaderesp:api_esportes:1.2`. Consultar mais em
 [README → Como receber atualizações](../README.md).

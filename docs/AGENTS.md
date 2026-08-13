@@ -79,8 +79,8 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 - **Implementado o Event Listener** (solicitação de cliente que consome o SDK via importação; decisões: clique na **linha do jogo** entrega **todos** os `canais_links`; manter o modal interno; entrega via **callback estático**):
   - Novo `jogos/event/EsporteEventListener.java` — `setListener(EsporteEventCallback)` / `clear()` / `notificarJogoClicado(ItemJogos)`. Callback na thread principal.
   - `ActivityEsporte.setList()` — `setOnItemClickListener` agora também chama `EsporteEventListener.notificarJogoClicado(jogo)` após abrir o modal (clientes sem listener mantêm o comportamento antigo).
-  - Documentação completa para o cliente: `docs/EVENT_LISTENER.md` + seção no `README.md` (Passo 4) + entrada "1.3" em Novidades por versão.
-  - **Pendente:** publicar tag `1.3` para o cliente receber o recurso (JitPack).
+  - Documentação completa para o cliente: `docs/EVENT_LISTENER.md` + seção no `README.md` (Passo 4) + entrada em Novidades por versão (na `1.2`).
+  - **Publicado dentro da tag `1.2`** (não existe tag `1.3` — solicitado manter versão `1.2`; o recurso saiu junto na `1.2` enviada via JitPack).
 - Criado módulo `demo/` (app host para teste):
   - `settings.gradle.kts` — adicionado `include(":demo")`
   - `demo/build.gradle.kts`, manifest, `MainActivity.java`, layout, strings, `demo/.gitignore` (`/build`)

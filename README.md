@@ -251,7 +251,7 @@ Para atualizar o SDK no seu app:
 
 ### Novidades por versao
 
-**1.3** (atual):
+**1.2** (atual):
 
 - **Event Listener:** o SDK agora emite um **evento para o app consumidor**
   quando o usuario clica na **linha de um jogo**, entregando o jogo completo com
@@ -261,9 +261,6 @@ Para atualizar o SDK no seu app:
   (o callback roda na thread principal; use `clear()` quando nao precisar mais).
   O modal interno de canais continua abrindo como antes; clientes sem listener
   nao mudam de comportamento. Detalhes em `docs/EVENT_LISTENER.md`.
-
-**1.2**:
-
 - **Canais de transmissao:** cada jogo com `canais_links` mostra uma **faixa de
   chips** (logotipo + nome) abaixo da linha; clicar na linha abre o **modal** com
   todas as secoes (Links, Simples, TV, IA) e clicar em um chip abre os
