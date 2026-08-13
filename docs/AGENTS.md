@@ -86,7 +86,7 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
   - `EsporteEventListener` ganhou a interface `AoClicarNoCanalListener` (`boolean aoClicarNoCanal(int idCanal)`) + registrador `onChannelClickListener(@Nullable ...)` + `notificarCanalClicado(int)` e `clear()` limpa os dois listeners.
   - **Regras atendidas (pedido do cliente):** `idCanal` é `int` **primitivo**, **fixo e único** por canal (é o `stream_id`, nunca posição na lista nem nome do botão); **sem ID → não dispara**; callback **sempre na UI thread** (o `notificarCanalClicado` garante via `Handler(Looper.getMainLooper())` quando chamado fora da main); helper público `tabelaIdParaNome(List<ItemCanalLink>)` → `Map<Integer,String>` (stream_id → channel_name) para o app traduzir o ID de volta ao nome.
   - `CanaisDialogFragment.adicionarSecaoLinks()` — cada chip de Link tem `setOnClickListener` → só notifica `EsporteEventListener.notificarCanalClicado(stream_id)` se `getStreamId() != null`.
-  - **Permanece dentro da tag `1.2`** (mesma versão publicada).
+  - **Permanece dentro da tag `1.2`** — **atualização:** por causa do cache de build no JitPack, a versão `1.2` ficou com o build ANTIGO (cliente não via os métodos novos mesmo após limpar cache local). Foi **publicada a tag `1.3`** no mesmo commit (`fa4033b`, branch `feature/classificacao-canais` mantida) — o cliente deve usar `com.github.jaderesp:api_esportes:1.3`. A `1.2` continua existindo, mas com build antigo (não usar).
 - Criado módulo `demo/` (app host para teste):
   - `settings.gradle.kts` — adicionado `include(":demo")`
   - `demo/build.gradle.kts`, manifest, `MainActivity.java`, layout, strings, `demo/.gitignore` (`/build`)

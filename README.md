@@ -251,7 +251,21 @@ Para atualizar o SDK no seu app:
 
 ### Novidades por versao
 
-**1.2** (atual):
+**1.3** (atual):
+
+- **Evento de clique no canal:** o SDK agora emite um **evento por canal** quando
+  o usuario clica em um canal de transmissao (secao "Links" do modal, ex.:
+  "Paramount+ 1 FHD"), entregando o **`stream_id`** (int primitivo, fixo e unico).
+  Registro via `EsporteEventListener.onChannelClickListener(...)` com callback que
+  retorna `boolean` (`true` = o app consumiu o clique); o callback chega sempre na
+  **UI thread** e **nao dispara** se o canal nao tiver ID (nunca envia 0/-1). O
+  helper `EsporteEventListener.tabelaIdParaNome(...)` traduz o ID de volta para o
+  nome do canal. Detalhes em `docs/EVENT_LISTENER.md`.
+- **Campo `stream_id`:** mapeado em `ItemCanalLink` (`getStreamId()`).
+- **Aviso `1.2`:** a versao `1.2` ficou com build antigo em cache no JitPack
+  (metodos novos nao apareceram para os clientes). Use sempre a `1.3` aqui.
+
+**1.2**:
 
 - **Event Listener:** o SDK emite eventos para o app consumidor:
   quando o usuario clica na **linha de um jogo**, entrega o jogo completo com
