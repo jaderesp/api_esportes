@@ -195,7 +195,7 @@ Dependencia atualizada (Groovy):
 
 ```groovy
 dependencies {
-    implementation 'com.github.jaderesp:api_esportes:1.3'
+    implementation 'com.github.jaderesp:api_esportes:1.5'
 }
 ```
 
@@ -203,13 +203,13 @@ Dependencia atualizada (Kotlin DSL):
 
 ```kotlin
 dependencies {
-    implementation("com.github.jaderesp:api_esportes:1.3")
+    implementation("com.github.jaderesp:api_esportes:1.5")
 }
 ```
 
-> **Versoes:** use sempre a versao mais recente publicada (atualmente `1.3`).
-> A `1.2` funciona para quem ja usava, mas ficou com um build antigo em cache no
-> JitPack e nao contem os ultimos ajustes do Event Listener de canal.
+> **Versoes:** use sempre a versao mais recente publicada (atualmente `1.5`).
+> A `1.2` ficou com build antigo em cache no JitPack (Event Listener de canal
+> ausente) — nao usar. Prefira `1.5` ou, no minimo, `1.4`.
 
 ### Passo 3 — Salvar token e abrir a tela
 
@@ -236,7 +236,7 @@ Guia completo (fluxo, payload, exemplos Java/Kotlin, limpeza) em
 
 ## Como receber atualizacoes do SDK (tags e versoes)
 
-Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`, `1.3`).
+Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`, `1.3`, `1.4`, `1.5`).
 O JitPack compila a biblioteca a partir da tag indicada no final da dependencia
 — por isso, **e obrigatorio atualizar a versao** para receber novas
 funcionalidades e correcoes.
@@ -246,7 +246,7 @@ Para atualizar o SDK no seu app:
 1. Consulte a versao mais recente em **Releases/Tags** do repositorio:
    `https://github.com/jaderesp/api_esportes/releases` (a versao mais alta = mais recente).
 2. No arquivo de dependencias (Groovy ou Kotlin DSL), troque o numero no final
-   da dependencia (ex.: de `1.2` para `1.3`).
+   da dependencia (ex.: de `1.4` para `1.5`).
 3. Clique em `Sync Now` no Android Studio.
 4. Faca o build e publique o app normalmente.
 
@@ -255,7 +255,39 @@ Para atualizar o SDK no seu app:
 
 ### Novidades por versao
 
-**1.3** (atual):
+**1.5** (atual):
+
+- **Navegacao D-pad presa na lista de jogos (Android TV):** durante o scroll
+  rapido (segurando a seta) o foco nao sai mais da lista para a coluna de datas
+  ou a barra de campeonatos. Item a item, e no fim da lista o foco permanece no
+  ultimo jogo. Correcao tambem do foco ao subir no fim (aguardar o layout do
+  item antes de pedir o foco, com `focarItemAposLayout`). Implementado em
+  `ActivityEsporte` via `dispatchKeyEvent` + `navegarListaJogos`.
+- **Auto-load dos jogos de HOJE centralizado:** o carregamento automatico dos
+  jogos do dia saiu do `DataAdapter` (que disparava junto de cada campeonato) e
+  agora e feito **uma unica vez** pelo `ActivityEsporte.autoCarregarHoje()` ao
+  abrir a tela — evita buscas duplicadas/competindo com a selecao de campionato.
+- **Protecao contra corrida de buscas:** contador interno `idBusca` no
+  `ActivityEsporte`. Cada nova busca (data/campeonato/classificacao) incrementa
+  o token; respostas e retries de buscas antigas sao ignorados, impedindo que
+  uma busca velha limpe/sobrescreva a lista recem-exibida.
+- **Data do servidor com mais fontes:** `SharedUtil.obterDatas()` agora tenta
+  primeiro a base configurada (`ApiConfig.getBaseUrl()`) e depois o Google;
+  como ultimo recurso usa a hora local do aparelho.
+
+**1.4**:
+
+- **Encerrar o SDK ao clicar em um canal:** com listener de canal registrado, o
+  clique em um canal da secao "Links" notifica o evento e **encerra a tela**
+  (`ActivityEsporte.finish()`). Sem listener, o modal continua aberto como antes.
+- **Feedback de foco nos chips do modal (TV):** novo drawable
+  `bg_canal_chip_selector_modal.xml` (normal x focado/selecionado/pressionado)
+  aplicado em todas as secoes do modal (Links, Simples, TV, IA).
+- **Logotipo do canal nos chips:** o chip da secao Links virou um `LinearLayout`
+  horizontal com `ImageView` (logo) + `TextView` (nome); o logo so aparece quando
+  `channel_logo` nao e vazio.
+
+**1.3** (anterior):
 
 - **Evento de clique no canal:** o SDK agora emite um **evento por canal** quando
   o usuario clica em um canal de transmissao (secao "Links" do modal, ex.:
@@ -267,7 +299,8 @@ Para atualizar o SDK no seu app:
   nome do canal. Detalhes em `docs/EVENT_LISTENER.md`.
 - **Campo `stream_id`:** mapeado em `ItemCanalLink` (`getStreamId()`).
 - **Aviso `1.2`:** a versao `1.2` ficou com build antigo em cache no JitPack
-  (metodos novos nao apareceram para os clientes). Use sempre a `1.3` aqui.
+  (metodos novos nao apareceram para os clientes). Use a versao mais recente
+  (`1.5`).
 
 **1.2**:
 

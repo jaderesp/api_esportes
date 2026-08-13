@@ -76,6 +76,15 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 
 ## Estado atual (última sessão)
 
+- **Publicada a tag `1.5`** (commit `410f16f`, branch `feature/classificacao-canais`):
+  - **Navegação D-pad travada na lista de jogos (Android TV):** `dispatchKeyEvent` na `ActivityEsporte` + `navegarListaJogos()` interceptam DPAD_UP/DPAD_DOWN quando o foco está dentro da lista (`estaDentroDaLista(focus)`), avançando item a item e **nunca** entregando o foco à coluna de datas/campeonatos, mesmo durante auto-repeat (scroll rápido). No fim (alvo >= count) permanece no último jogo; no topo (alvo < 0) retorna `false` e deixa o foco sair para cima (navegação intencional para campeonatos).
+  - **Correção do foco ao subir no fim da lista:** o antigo `listView.post(...)` podia rodar antes do layout, deixando `findViewByPosition` nulo e o foco "voltando" para a linha de baixo. Agora, quando o item alvo está fora do viewport, `scrollToPosition` + `focarItemAposLayout()` (listener de `OnGlobalLayout`) pedem o foco só depois do item existir. Se o item já está visível, `findViewByPosition(alvo).requestFocus()` é síncrono.
+  - **Auto-load de HOJE centralizado:** removido o `autoLoadFeito` do `DataAdapter` (disparava `buscarJogosPorData` junto de cada campeonato). Agora `ActivityEsporte.autoCarregarHoje()` chama `buscarJogosPorData(datas.get(0))` **uma única vez** no fim do delayed `4_000` que já chama `jogosdodia2()` + `recicleDate()`. `DataAdapter` só dá `requestFocus()` na primeira data (HOJE).
+  - **Proteção contra corrida de buscas:** novo `int idBusca` (token). `buscarJogosPorData`, `buscarJogosPorIdCamp` e `buscarClassificacao` fazem `int minhaBusca = ++idBusca` e passam o token por toda a cadeia de retry/thread/RunOnUiThread; qualquer execução com `minhaBusca != idBusca` é descartada — evita que um retry de HOJE antigo limpe os jogos de um campeonato recém-clicado (bug relatado pelo usuário: "clicar no campeonato e a list limpar/com os dados de hoje").
+  - **Retry separado para categorias:** `jogosdodia2()` usa o novo contador `tentativasCategorias` (o `tentativas` comum era compartilhado com as buscas de jogos, atrapalhando os retries).
+  - **Data do servidor com múltiplas fontes:** `SharedUtil.obterDatas()` tenta `HEAD` na base configurada (`ApiConfig.getBaseUrl()`) e, se falhar, em `https://www.google.com`; só se ambas falharem usa a hora local (fallback) para montar o header `Sao_Paulo`. Antes dependia só do Google.
+  - Teste de navegação feito na TV `192.168.3.14`: build do demo + `adb keyevent 20` (DPAD_DOWN) x75 → foco permaneceu **dentro** da lista (bounds entre o primeiro e o último item). SDK `1.5`. Recomendo ao usuário testar manualmente o comportamento de subir no fim (UP) no controle, pois o teste automatizado é limitado para validar a sensação de foco.
+- **Pendência em aberto:** configurar `externalNativeBuild` do CMake (o JNI `cpp/api_esportes.cpp` só valerá nos clientes se as `.so` forem recompiladas por ABI e comitadas).
 - **Implementado o Event Listener** (solicitação de cliente que consome o SDK via importação; decisões: clique na **linha do jogo** entrega **todos** os `canais_links`; manter o modal interno; entrega via **callback estático**):
   - Novo `jogos/event/EsporteEventListener.java` — `setListener(EsporteEventCallback)` / `clear()` / `notificarJogoClicado(ItemJogos)`. Callback na thread principal.
   - `ActivityEsporte.setList()` — `setOnItemClickListener` agora também chama `EsporteEventListener.notificarJogoClicado(jogo)` após abrir o modal (clientes sem listener mantêm o comportamento antigo).
@@ -123,6 +132,7 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
 ## Observações técnicas
 
 - `ActivityEsporte` usa `salvarHoraRedeSaoPaulo` (SharedPreferences `ClienteSetup`, chave `DataAtual`) e gera 5 datas a partir da hora do servidor (America/Sao_Paulo).
+- Navegação D-pad da lista de jogos: `dispatchKeyEvent` (não `setOnKeyListener`) é a interceptação principal — **não** há listener duplicado; `setList()` chama `configurarNavegacaoListaJogos()` apenas quando há itens. `focarItemAposLayout()` usa `OnGlobalLayoutListener` e remove o listener após o foco (evita acúmulo). O listener de `OnGlobalLayout` não é removido se o item ainda não existir — pode re-pedir foco até o item aparecer (comportamento previsto para scrollToPosition em itens fora do viewport).
 - Room: bancos `JogosDatabase`/`CategoriaDatabase`/`ClassificacaoDatabase` (cache local; `classificacao.db` com WAL). Aviso de schema export não configurado (cosmético).
 - Dependências principais: Retrofit 2.9.0, OkHttp 4.9.3, Gson, Glide 4.16.0, Room 2.6.1, Lottie 6.1.0, sdp 1.1.1.
 - minSdk 21, compileSdk 35, Java 11.

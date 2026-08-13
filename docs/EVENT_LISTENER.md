@@ -10,7 +10,7 @@ para redirecionar/reproduzir no próprio app:
   **canal** (`aoClicarNoCanal`), com o `stream_id` do canal clicado.
 
 > O evento de canal está disponível a partir da **versão 1.3** do SDK (a versão
-> `1.2` ficou com um build antigo em cache no JitPack — use sempre a mais recente).
+> `1.2` ficou com um build antigo em cache no JitPack — use sempre a mais recente, `1.5`).
 > O evento de jogo (`onJogoClicado`) existe desde a `1.2`.
 
 ---
@@ -355,8 +355,8 @@ O evento de canal só é disparado quando esse valor é não-nulo.
 ## 10) Observação sobre versão (JitPack)
 
 Os eventos de jogo e de canal estão publicados no repositório
-(`jaderesp/api_esportes`). Use a versão **`1.3`** (mais recente):
-`com.github.jaderesp:api_esportes:1.3`.
+(`jaderesp/api_esportes`). Use a versão **`1.5`** (mais recente):
+`com.github.jaderesp:api_esportes:1.5`.
 
 > **Atenção à `1.2`:** essa versão ficou com um build antigo em cache no JitPack
 > (os métodos novos não apareceram após limpar o cache local — o cache é no
