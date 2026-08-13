@@ -1,8 +1,16 @@
 package com.diegodev.apidesportes.jogos.event;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.Nullable;
 
+import com.diegodev.apidesportes.jogos.item.ItemCanalLink;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Evento que o SDK emite para o app consumidor acompanhar as interações do
@@ -111,18 +119,58 @@ public final class EsporteEventListener {
     /**
      * (SDK interno) Notifica o app consumidor sobre o clique em um canal.
      * Chamado pelo modal de canais quando o usuário toca em um canal da seção
-     * "Links". Não faz nada se nenhum listener foi registrado.
+     * "Links".
      *
-     * @param idCanal o {@code stream_id} do canal clicado.
+     * <p>Garantias:</p>
+     * <ul>
+     *   <li>O callback {@code aoClicarNoCanal} é sempre chamado na <b>thread
+     *   principal (UI)</b>, mesmo que esta notificação venha de outra thread.</li>
+     *   <li>O {@code idCanal} é sempre um {@code int} primitivo, fixo e único
+     *   (o {@code stream_id} da API) — nunca a posição na lista nem o nome do
+     *   botão. Se o canal não tiver ID, este evento <b>não é disparado</b>
+     *   (0 e -1 nunca são enviados).</li>
+     * </ul>
+     *
+     * @param idCanal o {@code stream_id} do canal clicado (nunca 0 ou -1).
      * @return true se o listener registrado consumiu o clique; false caso não
      *         haja listener ou o listener não tenha consumido.
      */
-    public static boolean notificarCanalClicado(int idCanal) {
-        AoClicarNoCanalListener cb = canalListener;
-        if (cb != null) {
+    public static boolean notificarCanalClicado(final int idCanal) {
+        final AoClicarNoCanalListener cb = canalListener;
+        if (cb == null) {
+            return false;
+        }
+        if (Looper.myLooper() == Looper.getMainLooper()) {
             return cb.aoClicarNoCanal(idCanal);
         }
-        return false;
+        final boolean[] consumido = {false};
+        new Handler(Looper.getMainLooper()).post(() ->
+                consumido[0] = cb.aoClicarNoCanal(idCanal));
+        return consumido[0];
+    }
+
+    /**
+     * Monta a tabela {@code stream_id → nome do canal} a partir da lista de
+     * canais de um jogo ({@link ItemJogos#getCanaisLinks()}).
+     *
+     * <p>Como o evento de canal entrega somente o {@code idCanal} (int), use
+     * este mapa no app consumidor para traduzir o ID de volta para o nome do
+     * canal (ex.: exibir "Paramount+ 1 FHD" ao receber {@code 44043}).</p>
+     *
+     * @param canais a lista de canais de transmissão do jogo.
+     * @return mapa {@code Integer → String} (stream_id → channel_name); chaves
+     *         somente para canais com ID válido. Nunca {@code null}.
+     */
+    public static Map<Integer, String> tabelaIdParaNome(List<ItemCanalLink> canais) {
+        Map<Integer, String> tabela = new HashMap<>();
+        if (canais != null) {
+            for (ItemCanalLink canal : canais) {
+                if (canal != null && canal.getStreamId() != null) {
+                    tabela.put(canal.getStreamId(), canal.getChannelName());
+                }
+            }
+        }
+        return tabela;
     }
 
     /**

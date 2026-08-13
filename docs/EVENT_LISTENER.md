@@ -219,10 +219,11 @@ Recomendação: registre o listener na Activity que inicia o SDK e chame
 
 | Arquivo | Papel |
 |---|---|
-| `app/src/main/java/com/diegodev/apidesportes/jogos/event/EsporteEventListener.java` | Holder estático do listener + interface `EsporteEventCallback` + `setListener`/`clear`/`notificarJogoClicado`. |
+| `app/src/main/java/com/diegodev/apidesportes/jogos/event/EsporteEventListener.java` | Holder estático dos listeners (`EsporteEventCallback` + `AoClicarNoCanalListener`), `setListener`/`definirAoClicarNoCanalListener`/`clear`, `notificarJogoClicado`/`notificarCanalClicado` e helper `tabelaIdParaNome`. |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/ActivityEsporte.java` | `setList()`: chama `EsporteEventListener.notificarJogoClicado(jogo)` junto com a abertura do modal. |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/adapter/JogosAdapter.java` | Dispara `onItemClickListener` no clique da linha (origem do evento). |
-| `app/src/main/java/com/diegodev/apidesportes/jogos/item/ItemJogos.java` / `ItemCanalLink.java` | Modelos entregues no payload. |
+| `app/src/main/java/com/diegodev/apidesportes/jogos/dialog/CanaisDialogFragment.java` | Chips da seção "Links" notificam `notificarCanalClicado(stream_id)` no clique (só com ID válido). |
+| `app/src/main/java/com/diegodev/apidesportes/jogos/item/ItemJogos.java` / `ItemCanalLink.java` | Modelos entregues no payload (`ItemCanalLink` tem `getStreamId()`). |
 
 ---
 
@@ -263,13 +264,59 @@ EsporteEventListener.definirAoClicarNoCanalListener { idCanal ->
 | `true` | O app consumiu o clique — o SDK **não** executa ação padrão. |
 | `false` (ou nenhum listener) | O SDK mantém a ação padrão atual (nada além do modal). |
 
+### Regras do `idCanal` (importante)
+
+- **Tipo:** `int` **primitivo**, **fixo** e **único** por canal (é o `stream_id` da
+  API Futebols).
+- **Nunca** é a posição na lista nem o nome do botão ("ESPN HD²" muda; o ID não).
+- **Sem ID → sem evento:** se o canal não tiver `stream_id`, o SDK **não dispara**
+  o evento — `0` e `-1` **nunca** são enviados. Trate o "sem canal" silenciosamente.
+- **Thread:** o callback `aoClicarNoCanal` chega **sempre na UI thread (principal)**.
+- **Fixo no tempo:** o `stream_id` é estável por canal (o nome pode mudar, o ID não).
+
+### Tabela ID → nome do canal
+
+O evento entrega somente o `idCanal` (int). Para traduzir de volta para o **nome do
+canal**, use o helper do SDK:
+
+**Java**
+
+```java
+// No evento de jogo (onJogoClicado) ou onde você tiver a lista de canais:
+Map<Integer, String> tabela = EsporteEventListener.tabelaIdParaNome(jogo.getCanaisLinks());
+// tabela.get(idCanal)  → ex.: 44043 → "Paramount+ 1 FHD"
+
+// No callback de canal:
+EsporteEventListener.definirAoClicarNoCanalListener(idCanal -> {
+    String nome = tabela.get(idCanal);   // nome do canal correspondente
+    abrirPlayerPorStreamId(idCanal, nome);
+    return true;
+});
+```
+
+**Kotlin**
+
+```kotlin
+val tabela = EsporteEventListener.tabelaIdParaNome(jogo.canaisLinks)
+EsporteEventListener.definirAoClicarNoCanalListener { idCanal ->
+    val nome = tabela[idCanal]
+    abrirPlayerPorStreamId(idCanal, nome)
+    true
+}
+```
+
+> O retorno é um `Map<Integer, String>` (stream_id → channel_name) montado a
+> partir da lista de `canais_links` do jogo. Chaves apenas para canais com ID.
+
 ### `stream_id` no payload
 
-O `stream_id` chega como **int** no evento de canal e também está disponível em
-cada objeto da lista `getCanaisLinks()` via `ItemCanalLink#getStreamId()`.
+O `stream_id` está disponível em cada objeto da lista `getCanaisLinks()` via
+`ItemCanalLink#getStreamId()` (retorna `Integer`; `null` se a API não informou).
+O evento de canal só é disparado quando esse valor é não-nulo.
 
 > O `stream_id` passou a existir na resposta da API Futebols (`canais_links`) e foi
-> mapeado nesta versão do SDK.
+> mapeado nesta versão do SDK. A API também devolve `numeric_channel_id` e
+> `collected_at`, ainda não mapeados.
 
 ---
 

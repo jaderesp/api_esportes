@@ -30,10 +30,15 @@ public class ItemCanalLink {
     private String transmissionUrl;
 
     @SerializedName("stream_id")
-    private int streamId;
+    private Integer streamId;
 
-    public int getStreamId() { return streamId; }
-    public void setStreamId(int streamId) { this.streamId = streamId; }
+    /**
+     * ID único e fixo do canal ({@code stream_id} da API), ou {@code null} se a
+     * API não informar este campo. Use-o apenas quando não for {@code null};
+     * o evento de canal também não é disparado sem um ID válido.
+     */
+    public Integer getStreamId() { return streamId; }
+    public void setStreamId(Integer streamId) { this.streamId = streamId; }
 
     public String getExternalChannelId() { return externalChannelId; }
     public void setExternalChannelId(String externalChannelId) { this.externalChannelId = externalChannelId; }

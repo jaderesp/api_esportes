@@ -259,8 +259,10 @@ Para atualizar o SDK no seu app:
   `EsporteEventListener.setListener(...)`. E quando o usuario clica em um **canal**
   dentro do modal de canais, entrega o **`stream_id`** (int) via
   `EsporteEventListener.definirAoClicarNoCanalListener(...)` (callback com retorno
-  `boolean`: `true` = o app consumiu o clique). Registro **antes** de abrir a
-  `ActivityEsporte` (callback na thread principal; use `clear()` quando nao
+  `boolean`: `true` = o app consumiu o clique; `idCanal` é int primitivo, fixo e
+  unico; sem ID o evento nao dispara — nunca envia 0/-1; sempre na UI thread).
+  O helper `tabelaIdParaNome(...)` traduz o ID de volta para o nome do canal.
+  Registro **antes** de abrir a `ActivityEsporte` (use `clear()` quando nao
   precisar mais). Clientes sem listener nao mudam de comportamento. Detalhes em
   `docs/EVENT_LISTENER.md`.
 - **Canais de transmissao:** cada jogo com `canais_links` mostra uma **faixa de

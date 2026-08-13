@@ -240,7 +240,12 @@ public class CanaisDialogFragment extends DialogFragment {
             chip.setFocusable(true); // foco com controle remoto (TV)
             // Clique no canal: notifica o app consumidor com o stream_id.
             // Se o app consumir (true), o SDK não executa ação padrão.
-            chip.setOnClickListener(v -> EsporteEventListener.notificarCanalClicado(canal.getStreamId()));
+            // Sem stream_id válido o evento NÃO é disparado (nunca envia 0/-1).
+            chip.setOnClickListener(v -> {
+                if (canal.getStreamId() != null) {
+                    EsporteEventListener.notificarCanalClicado(canal.getStreamId());
+                }
+            });
             containerCanais.addView(chip);
         }
 
