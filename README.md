@@ -253,14 +253,16 @@ Para atualizar o SDK no seu app:
 
 **1.2** (atual):
 
-- **Event Listener:** o SDK agora emite um **evento para o app consumidor**
-  quando o usuario clica na **linha de um jogo**, entregando o jogo completo com
-  todos os canais de `canais_links` (nome, logo, servidor e `transmission_url`)
-  para o app reproduzir no proprio player. Registro via
-  `EsporteEventListener.setListener(...)` **antes** de abrir a `ActivityEsporte`
-  (o callback roda na thread principal; use `clear()` quando nao precisar mais).
-  O modal interno de canais continua abrindo como antes; clientes sem listener
-  nao mudam de comportamento. Detalhes em `docs/EVENT_LISTENER.md`.
+- **Event Listener:** o SDK emite eventos para o app consumidor:
+  quando o usuario clica na **linha de um jogo**, entrega o jogo completo com
+  todos os canais de `canais_links` (nome, logo, servidor e `transmission_url`) via
+  `EsporteEventListener.setListener(...)`. E quando o usuario clica em um **canal**
+  dentro do modal de canais, entrega o **`stream_id`** (int) via
+  `EsporteEventListener.definirAoClicarNoCanalListener(...)` (callback com retorno
+  `boolean`: `true` = o app consumiu o clique). Registro **antes** de abrir a
+  `ActivityEsporte` (callback na thread principal; use `clear()` quando nao
+  precisar mais). Clientes sem listener nao mudam de comportamento. Detalhes em
+  `docs/EVENT_LISTENER.md`.
 - **Canais de transmissao:** cada jogo com `canais_links` mostra uma **faixa de
   chips** (logotipo + nome) abaixo da linha; clicar na linha abre o **modal** com
   todas as secoes (Links, Simples, TV, IA) e clicar em um chip abre os

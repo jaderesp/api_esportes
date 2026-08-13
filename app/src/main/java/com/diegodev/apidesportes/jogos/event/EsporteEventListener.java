@@ -51,8 +51,32 @@ public final class EsporteEventListener {
         void onJogoClicado(ItemJogos jogo);
     }
 
+    /**
+     * Callback para o clique em um canal de transmissão (seção "Links").
+     *
+     * <p>Ao clicar em um canal (ex.: "ESPN HD") dentro do modal de canais, o SDK
+     * notifica este listener com o {@code stream_id} (ID único e fixo do canal)
+     * e aguarda o retorno:</p>
+     * <ul>
+     *   <li>{@code true} — o app consumiu o clique (o SDK não executa ação padrão);</li>
+     *   <li>{@code false} — o app não consumiu (o SDK mantém a ação padrão).</li>
+     * </ul>
+     */
+    public interface AoClicarNoCanalListener {
+        /**
+         * Chamado quando o usuário clica em um canal de transmissão.
+         *
+         * @param idCanal ID único e fixo do canal clicado ({@code stream_id}).
+         * @return true se o app consumiu o clique.
+         */
+        boolean aoClicarNoCanal(int idCanal);
+    }
+
     @Nullable
     private static EsporteEventCallback listener;
+
+    @Nullable
+    private static AoClicarNoCanalListener canalListener;
 
     private EsporteEventListener() {
     }
@@ -71,6 +95,34 @@ public final class EsporteEventListener {
      */
     public static void clear() {
         listener = null;
+        canalListener = null;
+    }
+
+    /**
+     * Registra o listener que receberá os cliques em canais de transmissão.
+     *
+     * @param listener callback a ser notificado no clique de um canal; passe
+     *                 {@code null} para remover.
+     */
+    public static void definirAoClicarNoCanalListener(@Nullable AoClicarNoCanalListener listener) {
+        canalListener = listener;
+    }
+
+    /**
+     * (SDK interno) Notifica o app consumidor sobre o clique em um canal.
+     * Chamado pelo modal de canais quando o usuário toca em um canal da seção
+     * "Links". Não faz nada se nenhum listener foi registrado.
+     *
+     * @param idCanal o {@code stream_id} do canal clicado.
+     * @return true se o listener registrado consumiu o clique; false caso não
+     *         haja listener ou o listener não tenha consumido.
+     */
+    public static boolean notificarCanalClicado(int idCanal) {
+        AoClicarNoCanalListener cb = canalListener;
+        if (cb != null) {
+            return cb.aoClicarNoCanal(idCanal);
+        }
+        return false;
     }
 
     /**

@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.diegodev.apidesportes.R;
+import com.diegodev.apidesportes.jogos.event.EsporteEventListener;
 import com.diegodev.apidesportes.jogos.item.ItemCanalLink;
 import com.diegodev.apidesportes.jogos.item.ItemCanalSimples;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
@@ -237,6 +238,9 @@ public class CanaisDialogFragment extends DialogFragment {
             chip.setPadding(dp(10), dp(8), dp(10), dp(8));
             chip.setBackgroundResource(R.drawable.bg_canal_chip);
             chip.setFocusable(true); // foco com controle remoto (TV)
+            // Clique no canal: notifica o app consumidor com o stream_id.
+            // Se o app consumir (true), o SDK não executa ação padrão.
+            chip.setOnClickListener(v -> EsporteEventListener.notificarCanalClicado(canal.getStreamId()));
             containerCanais.addView(chip);
         }
 

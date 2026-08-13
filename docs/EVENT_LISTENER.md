@@ -1,9 +1,13 @@
 # Event Listener — Integração com o app consumidor
 
-Guia completo para o **app que consome o SDK** receber, em tempo real, os
-**cliques feitos pelo usuário dentro da tela de esportes** (ex.: tocar na linha
-do jogo "Palmeiras x Flamengo") e **consumir os dados retornados** (jogo +
-canais de transmissão) para redirecionar/reproduzir no próprio app.
+Guia completo para o **app que consome o SDK** receber, em tempo real, as
+interações do usuário dentro da tela de esportes e **consumir os dados retornados**
+para redirecionar/reproduzir no próprio app:
+
+- **Clique na linha de um jogo** (ex.: tocar em "Palmeiras x Flamengo") → evento
+  de **jogo** (`onJogoClicado`), com o jogo completo + todos os `canais_links`.
+- **Clique em um canal** (ex.: "ESPN HD") dentro do modal de canais → evento de
+  **canal** (`aoClicarNoCanal`), com o `stream_id` do canal clicado.
 
 > Disponível a partir da **versão 1.2** do SDK.
 
@@ -222,7 +226,54 @@ Recomendação: registre o listener na Activity que inicia o SDK e chame
 
 ---
 
-## 9) Observação sobre versão (JitPack)
+## 9) Evento de clique no canal — `AoClicarNoCanalListener`
+
+Além do clique na linha do jogo, o SDK também emite um evento **quando o usuário
+clica em um canal de transmissão** dentro do modal de canais (seção "Links",
+ex.: "Paramount+ 1 FHD").
+
+O evento entrega **somente o `stream_id`** (int) — ID único e fixo do canal —
+para o app reproduzir/redirecionar no próprio player.
+
+### Registrar (antes de abrir a tela)
+
+**Java**
+
+```java
+EsporteEventListener.definirAoClicarNoCanalListener(idCanal -> {
+    // idCanal = stream_id do canal clicado (int)
+    abrirPlayerPorStreamId(idCanal); // seu app decide
+    return true;  // true = app consumiu o clique
+});
+```
+
+**Kotlin**
+
+```kotlin
+EsporteEventListener.definirAoClicarNoCanalListener { idCanal ->
+    abrirPlayerPorStreamId(idCanal) // seu app decide
+    true // true = app consumiu o clique
+}
+```
+
+### Comportamento do retorno
+
+| Retorno do seu callback | O que o SDK faz |
+|---|---|
+| `true` | O app consumiu o clique — o SDK **não** executa ação padrão. |
+| `false` (ou nenhum listener) | O SDK mantém a ação padrão atual (nada além do modal). |
+
+### `stream_id` no payload
+
+O `stream_id` chega como **int** no evento de canal e também está disponível em
+cada objeto da lista `getCanaisLinks()` via `ItemCanalLink#getStreamId()`.
+
+> O `stream_id` passou a existir na resposta da API Futebols (`canais_links`) e foi
+> mapeado nesta versão do SDK.
+
+---
+
+## 10) Observação sobre versão (JitPack)
 
 Este recurso está publicado na **tag `1.2`** do repositório (`jaderesp/api_esportes`).
 O cliente recebe após **subir a versão da dependência**:

@@ -81,6 +81,11 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
   - `ActivityEsporte.setList()` — `setOnItemClickListener` agora também chama `EsporteEventListener.notificarJogoClicado(jogo)` após abrir o modal (clientes sem listener mantêm o comportamento antigo).
   - Documentação completa para o cliente: `docs/EVENT_LISTENER.md` + seção no `README.md` (Passo 4) + entrada em Novidades por versão (na `1.2`).
   - **Publicado dentro da tag `1.2`** (não existe tag `1.3` — solicitado manter versão `1.2`; o recurso saiu junto na `1.2` enviada via JitPack).
+- **Adicionado o Event Listener de canal (solicitação do programador do cliente):** dispara no **clique de um canal na seção "Links" dentro do modal** `CanaisDialogFragment`; entrega **somente o `stream_id` (int)**:
+  - `ItemCanalLink` ganhou o campo `stream_id` (int) com `@SerializedName("stream_id")` + `getStreamId()`/`setStreamId()` (campo **confirmado na API real**: `stream_id` = int, ex.: `44043`; a API também devolve `numeric_channel_id` e `collected_at`, ainda não mapeados).
+  - `EsporteEventListener` ganhou a interface `AoClicarNoCanalListener` (`boolean aoClicarNoCanal(int idCanal)`) + registrador `definirAoClicarNoCanalListener(@Nullable ...)` + `notificarCanalClicado(int)` (retorna `true` se o app consumiu) e `clear()` limpa os dois listeners.
+  - `CanaisDialogFragment.adicionarSecaoLinks()` — cada chip de Link agora tem `setOnClickListener` → `EsporteEventListener.notificarCanalClicado(canal.getStreamId())`.
+  - **Permanece dentro da tag `1.2`** (mesma versão publicada).
 - Criado módulo `demo/` (app host para teste):
   - `settings.gradle.kts` — adicionado `include(":demo")`
   - `demo/build.gradle.kts`, manifest, `MainActivity.java`, layout, strings, `demo/.gitignore` (`/build`)

@@ -29,6 +29,12 @@ public class ItemCanalLink {
     @SerializedName("transmission_url")
     private String transmissionUrl;
 
+    @SerializedName("stream_id")
+    private int streamId;
+
+    public int getStreamId() { return streamId; }
+    public void setStreamId(int streamId) { this.streamId = streamId; }
+
     public String getExternalChannelId() { return externalChannelId; }
     public void setExternalChannelId(String externalChannelId) { this.externalChannelId = externalChannelId; }
 
