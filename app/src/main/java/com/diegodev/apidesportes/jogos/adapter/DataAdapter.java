@@ -33,7 +33,6 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private String dataSelecionada;
     private boolean classificacaoSelecionada;
-    private boolean autoLoadFeito;
 
     public DataAdapter(Context context, List<DataItem> items, ActivityEsporte fragment) {
         this.context = context;
@@ -91,15 +90,11 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.tvData.setText(nome);
         holder.tvData.setSelected(dataSelecionada != null && dataSelecionada.equals(dataOriginal));
 
-        // Na primeira data ("HOJE"), foca e carrega os jogos do dia automaticamente.
+        // Na primeira data ("HOJE") apenas recebe o foco; o carregamento dos jogos
+        // do dia é disparado UMA única vez pelo ActivityEsporte (autoCarregarHoje),
+        // evitando buscas duplicadas/competindo quando um campeonato é selecionado.
         if (item.primeiroDia) {
             holder.tvData.requestFocus();
-            if (!autoLoadFeito) {
-                autoLoadFeito = true;
-                if (fragment != null) {
-                    fragment.buscarJogosPorData(dataOriginal);
-                }
-            }
         }
 
         holder.tvData.setOnClickListener(v -> {

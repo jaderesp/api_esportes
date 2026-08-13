@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -63,6 +65,12 @@ public class ActivityEsporte extends AppCompatActivity {
     private ClassificacaoDatabase dbClassificacao;
     private LinearLayout splash,geral,lisvazia,loading;
     private int tentativas = 0;
+    private int tentativasCategorias = 0;
+    // Token da busca atual: cada nova busca (data/campeonato/classificação)
+    // incrementa este contador. Loops de retry de buscas ANTIGAS são ignorados
+    // quando o token mudou — evita que uma busca velha limpe/sobrescreva a lista
+    // recém-exibida (ex.: clicar em um campeonato e o auto-load de HOJE limpar tudo).
+    private int idBusca = 0;
     private final int MAX_TENTATIVAS = 7;
     private Handler handler = new Handler(Looper.getMainLooper());
     public static String horaBaseFormatada = "";
@@ -122,6 +130,7 @@ public class ActivityEsporte extends AppCompatActivity {
             geral.setVisibility(View.VISIBLE);
             new Thread(this::jogosdodia2).start();
             recicleDate();
+            autoCarregarHoje();
         }, 4_000);
 
 
@@ -213,27 +222,50 @@ public class ActivityEsporte extends AppCompatActivity {
 
 
 
-    public void buscarJogosPorData(String data) {
-        tentativas = 0;
-        tentarBuscarJogos(data);
+    /** Carrega os jogos de "HOJE" uma única vez ao abrir a tela (auto-load). */
+    private void autoCarregarHoje() {
+        List<String> datas = gerarListaDeDatas(this);
+        if (!datas.isEmpty()) {
+            buscarJogosPorData(datas.get(0));
+        }
     }
 
-    private void tentarBuscarJogos(String data) {
+    public void buscarJogosPorData(String data) {
+        tentativas = 0;
+        int minhaBusca = ++idBusca;
+        tentarBuscarJogos(data, minhaBusca);
+    }
+
+    private void tentarBuscarJogos(String data, int minhaBusca) {
+        // Esta execução pertence a uma busca antiga que foi substituída.
+        if (minhaBusca != idBusca) {
+            return;
+        }
         loading.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
             List<ItemJogos> jogos = dbjogos.jogosDao().getJogosPorData(data);
+            if (minhaBusca != idBusca) {
+                return;
+            }
             if (jogos != null && !jogos.isEmpty()) {
-                runOnUiThread(() -> setList(jogos));
-
+                runOnUiThread(() -> {
+                    if (minhaBusca == idBusca) {
+                        setList(jogos);
+                    }
+                });
 
             } else {
                 tentativas++;
                 if (tentativas < MAX_TENTATIVAS) {
                     Log.d("JogosPorData", "Tentativa " + tentativas + " falhou. Tentando novamente em 1s...");
-                    handler.postDelayed(() -> tentarBuscarJogos(data), 1000); // 1 segundo
+                    handler.postDelayed(() -> tentarBuscarJogos(data, minhaBusca), 1000); // 1 segundo
                 } else {
-                    runOnUiThread(this::JogosVazio);
+                    runOnUiThread(() -> {
+                        if (minhaBusca == idBusca) {
+                            JogosVazio();
+                        }
+                    });
                     Log.d("JogosPorData", "Nenhum jogo encontrado para: " + data + " após 5 tentativas.");
                 }
             }
@@ -262,7 +294,8 @@ public class ActivityEsporte extends AppCompatActivity {
         }
         recicleDate();
         tentativas = 0;
-        tentarBuscarJogosPorId(idCamp);
+        int minhaBusca = ++idBusca;
+        tentarBuscarJogosPorId(idCamp, minhaBusca);
     }
 
     /** Clique na opção "Tabela": busca e mostra a classificação do campeonato selecionado. */
@@ -283,23 +316,38 @@ public class ActivityEsporte extends AppCompatActivity {
                 caller.chamarApi(url, token, campSelecionadoId);
 
                 tentativas = 0;
-                tentarBuscarClassificacao();
+                int minhaBusca = ++idBusca;
+                tentarBuscarClassificacao(minhaBusca);
             });
         }).start();
     }
 
-    private void tentarBuscarClassificacao() {
+    private void tentarBuscarClassificacao(int minhaBusca) {
+        if (minhaBusca != idBusca) {
+            return;
+        }
         new Thread(() -> {
             List<ItemClassificacao> lista = dbClassificacao.classificacaoDao().getPorCamp(campSelecionadoId);
+            if (minhaBusca != idBusca) {
+                return;
+            }
             if (lista != null && !lista.isEmpty()) {
-                runOnUiThread(() -> setClassificacao(lista));
+                runOnUiThread(() -> {
+                    if (minhaBusca == idBusca) {
+                        setClassificacao(lista);
+                    }
+                });
             } else {
                 tentativas++;
                 if (tentativas < MAX_TENTATIVAS) {
                     Log.d("Classificacao", "Tentativa " + tentativas + " falhou. Tentando novamente em 1s...");
-                    handler.postDelayed(this::tentarBuscarClassificacao, 1000);
+                    handler.postDelayed(() -> tentarBuscarClassificacao(minhaBusca), 1000);
                 } else {
-                    runOnUiThread(this::ClassificacaoVazia);
+                    runOnUiThread(() -> {
+                        if (minhaBusca == idBusca) {
+                            ClassificacaoVazia();
+                        }
+                    });
                     Log.d("Classificacao", "Nenhuma classificação encontrada após " + MAX_TENTATIVAS + " tentativas.");
                 }
             }
@@ -327,20 +375,34 @@ public class ActivityEsporte extends AppCompatActivity {
         });
     }
 
-    private void tentarBuscarJogosPorId(int idCamp) {
+    private void tentarBuscarJogosPorId(int idCamp, int minhaBusca) {
+        if (minhaBusca != idBusca) {
+            return;
+        }
         loading.setVisibility(View.VISIBLE);
         new Thread(() -> {
             List<ItemJogos> jogosFiltrados = dbjogos.jogosDao().getJogosPorIdCamp(idCamp);
+            if (minhaBusca != idBusca) {
+                return;
+            }
             if (jogosFiltrados != null && !jogosFiltrados.isEmpty()) {
-                runOnUiThread(() -> setList(jogosFiltrados));
+                runOnUiThread(() -> {
+                    if (minhaBusca == idBusca) {
+                        setList(jogosFiltrados);
+                    }
+                });
 
             } else {
                 tentativas++;
                 if (tentativas < MAX_TENTATIVAS) {
                     Log.d("JogosFiltrados", "Tentativa " + tentativas + " falhou. Tentando novamente em 1s...");
-                    handler.postDelayed(() -> tentarBuscarJogosPorId(idCamp), 1000); // 1 segundo
+                    handler.postDelayed(() -> tentarBuscarJogosPorId(idCamp, minhaBusca), 1000); // 1 segundo
                 } else {
-                    runOnUiThread(this::JogosVazio);
+                    runOnUiThread(() -> {
+                        if (minhaBusca == idBusca) {
+                            JogosVazio();
+                        }
+                    });
                     Log.d("JogosFiltrados", "Nenhum jogo encontrado para o idCamp: " + idCamp + " após 5 tentativas.");
                 }
             }
@@ -349,7 +411,7 @@ public class ActivityEsporte extends AppCompatActivity {
 
 
     public void jogosdodia2() {
-        tentativas = 0;
+        tentativasCategorias = 0;
         tentarBuscarJogosDoDia();
     }
 
@@ -364,9 +426,9 @@ public class ActivityEsporte extends AppCompatActivity {
                     recyclerViewCate.setAdapter(adapter);
                 });
             } else {
-                tentativas++;
-                if (tentativas < MAX_TENTATIVAS) {
-                    Log.d("JogosFiltrados", "Tentativa " + tentativas + " falhou. Tentando novamente em 1s...");
+                tentativasCategorias++;
+                if (tentativasCategorias < MAX_TENTATIVAS) {
+                    Log.d("JogosFiltrados", "Tentativa " + tentativasCategorias + " falhou. Tentando novamente em 1s...");
                     handler.postDelayed(this::tentarBuscarJogosDoDia, 1000); // 1 segundo
                 } else {
                     Log.d("JogosFiltrados", "Categoria de Campeonatos Vazia após 5 tentativas.");
@@ -399,8 +461,127 @@ public class ActivityEsporte extends AppCompatActivity {
                     CanalDetalheDialogFragment.newInstance(canal)
                             .show(getSupportFragmentManager(), "canal_detalhe"));
             listView.setAdapter(myAdapter);
+            configurarNavegacaoListaJogos();
 
         });
+    }
+
+    /**
+     * Mantém o foco D-pad dentro da lista de jogos durante o scroll rápido
+     * (key-repeat ao segurar a seta para baixo/cima). Sem isso, quando o item
+     * focado sai do viewport o Android entrega o foco à coluna de datas ou à
+     * barra de campeonatos, "desfocando" a lista.
+     */
+    private void configurarNavegacaoListaJogos() {
+        listView.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN) {
+                return false;
+            }
+            if (keyCode != KeyEvent.KEYCODE_DPAD_DOWN && keyCode != KeyEvent.KEYCODE_DPAD_UP) {
+                return false;
+            }
+            return navegarListaJogos(keyCode);
+        });
+    }
+
+    /**
+     * Intercepta o botão para baixo/cima quando o foco está na lista de jogos,
+     * mesmo durante auto-repeat (scroll rápido). Garante que o foco navegue
+     * item a item e nunca saia da lista: no fim permanece no último jogo.
+     */
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            int code = event.getKeyCode();
+            if ((code == KeyEvent.KEYCODE_DPAD_DOWN || code == KeyEvent.KEYCODE_DPAD_UP)
+                    && listView != null
+                    && listView.getAdapter() != null
+                    && listView.getAdapter().getItemCount() > 0) {
+                View focus = getCurrentFocus();
+                if (focus != null && estaDentroDaLista(focus)) {
+                    if (navegarListaJogos(code)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    /** Verdadeiro se o view está dentro da lista de jogos (ou é a própria lista). */
+    private boolean estaDentroDaLista(View view) {
+        ViewParent parent = view.getParent();
+        while (parent != null) {
+            if (parent == listView) {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+
+    private boolean navegarListaJogos(int keyCode) {
+        LinearLayoutManager lm = (LinearLayoutManager) listView.getLayoutManager();
+        RecyclerView.Adapter<?> adapter = listView.getAdapter();
+        if (lm == null || adapter == null || adapter.getItemCount() == 0) {
+            return false;
+        }
+
+        View focused = listView.getFocusedChild();
+        int pos = focused != null
+                ? listView.getChildAdapterPosition(focused)
+                : lm.findFirstVisibleItemPosition();
+        if (pos < 0) {
+            pos = lm.findFirstVisibleItemPosition();
+        }
+
+        int delta = (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) ? 1 : -1;
+        int alvo = pos + delta;
+        int count = adapter.getItemCount();
+
+        // No topo, pressionar para cima deixa o foco sair da lista
+        // (navegação intencional para a barra de campeonatos/acima).
+        if (alvo < 0) {
+            return false;
+        }
+
+        // No fim, pressionar para baixo permanece no último jogo.
+        if (alvo >= count) {
+            alvo = count - 1;
+        }
+
+        View childAlvo = lm.findViewByPosition(alvo);
+        if (childAlvo != null) {
+            childAlvo.requestFocus();
+            return true;
+        }
+
+        // Item fora do viewport: rola e só então devolve o foco ao item,
+        // aguardando o layout terminar para o item existir na hierarquia.
+        lm.scrollToPosition(alvo);
+        focarItemAposLayout(alvo);
+        return true;
+    }
+
+    /**
+     * Rola a lista até {@code posicao} e pede foco ao item assim que ele
+     * estiver desenhado. Usado quando o alvo está fora do viewport: um simples
+     * post() pode rodar antes do layout, deixando o item ainda inexistente.
+     */
+    private void focarItemAposLayout(int posicao) {
+        listView.getViewTreeObserver().addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                RecyclerView.LayoutManager lm = listView.getLayoutManager();
+                View child = lm != null ? lm.findViewByPosition(posicao) : null;
+                if (child != null) {
+                    listView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    child.requestFocus();
+                }
+            }
+        });
+        // Garantia: dispara um layout para o listener ser chamado.
+        listView.requestLayout();
     }
 
     @SuppressLint("MissingSuperCall")

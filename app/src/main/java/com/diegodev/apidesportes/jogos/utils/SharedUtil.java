@@ -19,29 +19,39 @@ public class SharedUtil {
 
             String dataFinal;
 
-            try {
-                URL url = new URL("https://www.google.com");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("HEAD");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-                connection.connect();
+            String[] fontes = {
+                    ApiConfig.getBaseUrl(),
+                    "https://www.google.com",
+            };
 
-                String serverDate = connection.getHeaderField("Date");
-                if (serverDate != null && !serverDate.isEmpty()) {
-                    SimpleDateFormat formatoGMT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-                    formatoGMT.setTimeZone(TimeZone.getTimeZone("GMT"));
-                    Date date = formatoGMT.parse(serverDate);
+            dataFinal = null;
+            for (String fonte : fontes) {
+                try {
+                    URL url = new URL(fonte);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("HEAD");
+                    connection.setConnectTimeout(5000);
+                    connection.setReadTimeout(5000);
+                    connection.connect();
 
-                    SimpleDateFormat formatoSaoPaulo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    formatoSaoPaulo.setTimeZone(TimeZone.getTimeZone("America/Sao_Paulo"));
+                    String serverDate = connection.getHeaderField("Date");
+                    if (serverDate != null && !serverDate.isEmpty()) {
+                        SimpleDateFormat formatoGMT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+                        formatoGMT.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        Date date = formatoGMT.parse(serverDate);
 
-                    dataFinal = formatoSaoPaulo.format(date);
-                } else {
-                    throw new Exception("Data do servidor ausente");
+                        SimpleDateFormat formatoSaoPaulo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        formatoSaoPaulo.setTimeZone(TimeZone.getTimeZone("America/Sao_Paulo"));
+
+                        dataFinal = formatoSaoPaulo.format(date);
+                        break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            }
+
+            if (dataFinal == null) {
                 // Fallback para hora local do dispositivo
                 dataFinal = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                         .format(new Date());
