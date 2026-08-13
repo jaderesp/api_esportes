@@ -195,7 +195,7 @@ Dependencia atualizada (Groovy):
 
 ```groovy
 dependencies {
-    implementation 'com.github.jaderesp:api_esportes:1.2'
+    implementation 'com.github.jaderesp:api_esportes:1.3'
 }
 ```
 
@@ -203,9 +203,13 @@ Dependencia atualizada (Kotlin DSL):
 
 ```kotlin
 dependencies {
-    implementation("com.github.jaderesp:api_esportes:1.2")
+    implementation("com.github.jaderesp:api_esportes:1.3")
 }
 ```
+
+> **Versoes:** use sempre a versao mais recente publicada (atualmente `1.3`).
+> A `1.2` funciona para quem ja usava, mas ficou com um build antigo em cache no
+> JitPack e nao contem os ultimos ajustes do Event Listener de canal.
 
 ### Passo 3 — Salvar token e abrir a tela
 
@@ -232,7 +236,7 @@ Guia completo (fluxo, payload, exemplos Java/Kotlin, limpeza) em
 
 ## Como receber atualizacoes do SDK (tags e versoes)
 
-Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`).
+Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`, `1.3`).
 O JitPack compila a biblioteca a partir da tag indicada no final da dependencia
 — por isso, **e obrigatorio atualizar a versao** para receber novas
 funcionalidades e correcoes.
@@ -242,7 +246,7 @@ Para atualizar o SDK no seu app:
 1. Consulte a versao mais recente em **Releases/Tags** do repositorio:
    `https://github.com/jaderesp/api_esportes/releases` (a versao mais alta = mais recente).
 2. No arquivo de dependencias (Groovy ou Kotlin DSL), troque o numero no final
-   da dependencia (ex.: de `1.1` para `1.2`).
+   da dependencia (ex.: de `1.2` para `1.3`).
 3. Clique em `Sync Now` no Android Studio.
 4. Faca o build e publique o app normalmente.
 
