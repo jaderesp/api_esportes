@@ -23,7 +23,7 @@ Integra dados de jogos, campeonatos e placares da API **Futebols**:
   - `jogos/bancoSql/` — Room/SQLite (cache local: `JogosDatabase`, `CategoriaDatabase`)
   - `jogos/adapter/`, `jogos/item/`, `jogos/callback/`, `jogos/dialog/`, `jogos/utils/`
   - `jogos/callback/na.java` + `dja.java` — decriptação nativa da URL base (AES/CBC + JNI)
-- `jogos/dialog/CanaisDialogFragment.java` — modal (bottom sheet) com **todas** as seções de canais de transmissão (Links, Simples, TV, IA); aberto ao clicar na linha do jogo (ver `docs/CANAIS_TRANSMISSAO.md`)
+- `jogos/dialog/CanaisDialogFragment.java` — modal (bottom sheet) com os **canais da playlist (`canais_links`)** do jogo (única seção exibida — `Links`); aberto ao clicar na linha do jogo (ver `docs/CANAIS_TRANSMISSAO.md`)
 - `jogos/dialog/CanalDetalheDialogFragment.java` — modal (bottom sheet) com os detalhes de um canal link (logo, nome, servidor, transmission_url); aberto ao clicar em um chip da faixa da linha do jogo
 - `jogos/event/EsporteEventListener.java` — **eventos para o app consumidor**: holder estático com dois listeners — `EsporteEventCallback` (`onJogoClicado(ItemJogos)`, disparado no clique da linha do jogo em `ActivityEsporte.setList()` junto com a abertura do modal; registro via `setListener(...)`) e `AoClicarNoCanalListener` (`boolean aoClicarNoCanal(int idCanal)`, disparado no clique de um canal da seção "Links" do modal `CanaisDialogFragment`; registro via `onChannelClickListener(...)`; entrega o `stream_id` do canal). Limpeza com `clear()` limpa os dois (ver `docs/EVENT_LISTENER.md`)
 - `jogos/item/ItemCanalSimples.java` + `jogos/item/ItemCanalLink.java` — objetos de `canais_simples`/`canais_links` da API (não são mais listas de strings)
@@ -98,7 +98,7 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
   - **Publicado na tag `1.3`** (mesma branch `feature/classificacao-canais`; a `1.2` ficou com build antigo no JitPack).
 - **Novas necessidades do cliente implementadas (pedido do programador do cliente):**
   1. **Encerrar o SDK ao clicar em um canal:** o chip da seção "Links" notifica `notificarCanalClicado(stream_id)` e, se houver listener de canal registrado, encerra a tela com `requireActivity().finish()` (novo método `EsporteEventListener.possuiListenerDeCanal()`). Sem listener, o modal continua aberto como antes. O encerramento independe do retorno (`true`/`false`) do callback — depende da **existência** do listener.
-  2. **Feedback de foco nos chips do modal (TV):** novo drawable `bg_canal_chip_selector_modal.xml` (normal = `bg_canal_chip`, focado/selecionado/pressionado = `bg_canal_chip_foco`); aplicado em **todas** as seções do modal (Links, Simples, TV, IA).
+  2. **Feedback de foco nos chips do modal (TV):** novo drawable `bg_canal_chip_selector_modal.xml` (normal = `bg_canal_chip`, focado/selecionado/pressionado = `bg_canal_chip_foco`); aplicado nos chips do modal (seção `Links`).
   3. **Logotipo do canal nos chips:** o chip da seção Links virou um `LinearLayout` horizontal com `ImageView` (logo) + `TextView` (nome); o logo só é exibido quando `channel_logo` não é vazio, carregado via `ImageLoader`.
   - Doc `EVENT_LISTENER.md` atualizada (seções 8 e 9) com o encerramento, foco e logotipo.
 - Criado módulo `demo/` (app host para teste):
@@ -121,7 +121,7 @@ Lógica em `app/src/main/java/com/diegodev/apidesportes/jogos/utils/ApiConfig.ja
   - `JogosDatabase` versão 1 → **3** + `Converters.java` (Room salva `List<T>` como JSON; usa `fallbackToDestructiveMigration`, cache antigo é apagado).
   - **Faixa de chips na linha do jogo** (apenas `canais_links`): `JogosAdapter.preencherCanais()` + `inflarChip()`; layout `api_item_canal_linha.xml` (logo `iv_canal_logo` + nome `tv_canal_nome`) dentro de `HorizontalScrollView` em `api_item_jogos.xml`. Interfaces `OnItemClickListener` (jogo) e `OnCanalClickListener` (chip).
   - **CanalDetalheDialogFragment** + `dialog_canal_detalhe.xml`: modal de detalhes do canal (logo, nome, servidor, transmission_url).
-  - `CanaisDialogFragment`: reordenado para exibir a seção `Links` **primeiro** (objetos via `ARG_CANAIS_LINKS_JSON`, Gson `TypeToken<List<ItemCanalLink>>`), depois Simples → TV → IA; vazio → "Nenhum canal informado".
+  - `CanaisDialogFragment`: exibe **apenas** a seção `Links` (`canais_links`, objetos via `ARG_CANAIS_LINKS_JSON`, Gson `TypeToken<List<ItemCanalLink>>`); os índices `canais`, `canais_ia` e `canais_simples` **não** são listados (não têm `transmission_url` — não são clicáveis); vazio → "Nenhum canal informado".
   - `AndroidManifest.xml` da biblioteca: `usesCleartextTraffic="true"` (logos de canal em `http://`).
   - Design da faixa: `bg_canal_chip_faixa*`, `bg_canal_chip_selector`, `bg_canal_logo_oval` (drawables). Fonte do nome do canal atualmente `_7sdp` (aumentada 250% sobre `_2sdp`, decisão do usuário).
   - Novo utils `JogoStatus` (status/placar) e `ImageLoader` (logos URL/base64).

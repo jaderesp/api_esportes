@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selector do chip de campeonato (estado selecionado/focado verde). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:drawable="@drawable/bg_menu_camp_foco" />
+    <item android:state_focused="true" android:drawable="@drawable/bg_menu_camp_foco" />
+    <item android:drawable="@drawable/bg_menu_camp" />
+</selector>

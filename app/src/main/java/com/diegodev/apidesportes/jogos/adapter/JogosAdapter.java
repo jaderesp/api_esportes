@@ -69,8 +69,9 @@ public class JogosAdapter extends RecyclerView.Adapter<JogosAdapter.ViewHolder> 
         int gola = itemJogos.getGolsA();
         int golb = itemJogos.getGolsB();
 
-        // Status do jogo (traduz o campo "description" da API)
+        // Status do jogo (traduz o campo "description" da API) + pill do widget
         holder.txtdescricao.setText(JogoStatus.texto(descricao));
+        holder.txtdescricao.setBackgroundResource(JogoStatus.pillRes(descricao));
         if (JogoStatus.temPlacar(descricao)) {
             holder.txtPlacar.setVisibility(View.VISIBLE);
             holder.imgvs.setVisibility(View.INVISIBLE);

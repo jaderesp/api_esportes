@@ -11,8 +11,8 @@ Guia rápido de como funciona e como mexer nos **canais de transmissão**
 - **Faixa de chips na lista:** cada jogo com `canais_links` mostra, abaixo da
   linha, uma faixa (rolagem horizontal) com um **chip** por link de transmissão:
   logotipo + nome do canal.
-- **Clique na linha do jogo** → abre um **modal (bottom sheet)** com **todas**
-  as seções de canais do jogo, nesta ordem: `Links`, `Canais Simples`, `Canais de TV`, `Canais IA`.
+- **Clique na linha do jogo** → abre um **modal (bottom sheet)** com os
+  **canais da playlist (`canais_links`)** do jogo (única seção exibida: `Links`).
 - **Clique em um chip da faixa** → abre o **modal de detalhes do canal**
   (logotipo grande, nome, servidor e URL de transmissão `.m3u8`).
 - Se o jogo não tiver canais, o modal mostra "Nenhum canal informado para este jogo.".
@@ -53,7 +53,7 @@ JogosAdapter.preencherCanais()  →  faixa de chips (apenas canais_links)
       │  itemView.setOnClickListener → onItemClickListener.onItemClick(jogo)
       ▼
 ActivityEsporte:
-      ├─ jogo clicado → CanaisDialogFragment.newInstance(jogo)      (todas as seções)
+      ├─ jogo clicado → CanaisDialogFragment.newInstance(jogo)      (somente canais_links)
       └─ chip clicado → CanalDetalheDialogFragment.newInstance(canal)  (detalhes)
 ```
 
@@ -87,7 +87,7 @@ Precisa de um `ItemJogos` para o modal completo e de um `ItemCanalLink` para os
 detalhes:
 
 ```java
-// Modal com todas as seções de canais do jogo
+// Modal com os canais_links (playlist) do jogo
 CanaisDialogFragment.newInstance(jogo)
         .show(getSupportFragmentManager(), "canais_dialog");
 
@@ -106,8 +106,11 @@ CanalDetalheDialogFragment.newInstance(canal) // canal: ItemCanalLink
 - **Tamanho/fonte do chip da faixa:** edite `api_item_canal_linha.xml`
   (`tv_canal_nome` para texto, `iv_canal_logo` para o logo). Fundos em
   `bg_canal_chip_faixa*`.
-- **Seções/ordem do modal:** edite `preencherCanais()`/`adicionarSecaoLinks()`
-  em `CanaisDialogFragment.java`; textos em `strings.xml` (`modal_canais_sec_*`).
+- **Modal exibe apenas `canais_links` (playlist):** o SDK lista somente os canais
+  com `transmission_url` — canais de `canais_simples`/`canais`/`canais_ia` **não**
+  aparecem (não têm URL de transmissão e não seriam clicáveis). Edite
+  `preencherCanais()`/`adicionarSecaoLinks()` em `CanaisDialogFragment.java`;
+  texto de vazio em `strings.xml` (`modal_canais_empty`).
 - **Cores:** em `app/src/main/res/values/colors.xml` (prefixo `modal_`).
 - **Logos via HTTP:** o `AndroidManifest.xml` da biblioteca tem
   `usesCleartextTraffic="true"` (alguns `channel_logo` usam `http://`).
@@ -129,3 +132,6 @@ CanalDetalheDialogFragment.newInstance(canal) // canal: ItemCanalLink
 - **Compatibilidade:** se os campos não existirem no JSON de um cliente, o Gson
   apenas deixa-os `null`; a faixa é ocultada e o modal mostra
   "Nenhum canal informado". Nada quebra.
+- **Somente playlist:** o modal (e a faixa da lista) exibem **apenas** os canais
+  de `canais_links`. Sem `canais_links`, o modal mostra "Nenhum canal informado" —
+  os índices `canais`, `canais_ia` e `canais_simples` **não** são listados.

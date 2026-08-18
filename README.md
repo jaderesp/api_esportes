@@ -38,7 +38,7 @@ Guia principal para desenvolvedores, clientes e mantenedores do SDK:
   Acompanhe os cliques nos jogos dentro do SDK e receba os dados de transmissao
   (`canais_links`) para reproduzir no seu proprio player.
 - **[Canais de Transmissao](docs/CANAIS_TRANSMISSAO.md)**
-  Como funcionam a faixa de canais na lista e os modais de canais (Links, Simples, TV, IA).
+  Como funcionam a faixa de canais na lista e o modal de canais (apenas `canais_links`).
 - **[Tabela de Classificacao](docs/CLASSIFICACAO.md)**
   Como funciona a opcao "Tabela" (classificacao por campeonato).
 
@@ -282,7 +282,7 @@ Para atualizar o SDK no seu app:
   (`ActivityEsporte.finish()`). Sem listener, o modal continua aberto como antes.
 - **Feedback de foco nos chips do modal (TV):** novo drawable
   `bg_canal_chip_selector_modal.xml` (normal x focado/selecionado/pressionado)
-  aplicado em todas as secoes do modal (Links, Simples, TV, IA).
+  aplicado nos chips do modal (secao Links).
 - **Logotipo do canal nos chips:** o chip da secao Links virou um `LinearLayout`
   horizontal com `ImageView` (logo) + `TextView` (nome); o logo so aparece quando
   `channel_logo` nao e vazio.
@@ -318,7 +318,7 @@ Para atualizar o SDK no seu app:
   `docs/EVENT_LISTENER.md`.
 - **Canais de transmissao:** cada jogo com `canais_links` mostra uma **faixa de
   chips** (logotipo + nome) abaixo da linha; clicar na linha abre o **modal** com
-  todas as secoes (Links, Simples, TV, IA) e clicar em um chip abre os
+  os **canais_links** (playlist) do jogo e clicar em um chip abre os
   **detalhes do canal** (logo, servidor e URL de transmissao). Detalhes em `docs/CANAIS_TRANSMISSAO.md`.
 - **Tabela de classificacao:** ao selecionar um campeonato, aparece a opcao "Tabela" acima de "HOJE" exibindo a classificacao completa. Detalhes em `docs/CLASSIFICACAO.md`.
 - Novo modulo `demo/` para testes em aparelho real/TV. O token de testes e

@@ -336,7 +336,7 @@ não registrarem o listener mantêm o modal aberto, sem encerrar nada.
 
 - O chip de cada canal da seção "Links" agora exibe o **`channel_logo`** (URL ou
   base64) quando a API informa o campo; sem logo, mostra apenas o nome.
-- Todos os chips do modal (Links, Simples, TV e IA) usam o selector
+- Os chips do modal (seção `Links`, canais_links) usam o selector
   `bg_canal_chip_selector_modal`, que **destaca o chip quando focado** — amigável
   para navegação com controle remoto em Android TV.
 

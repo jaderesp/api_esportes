@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Chip de canal FOCADO (controle remoto): fundo + borda verde da marca. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/widget_brand_soft" />
+    <solid android:color="#1CF5F8FF" />
     <stroke
         android:width="2dp"
-        android:color="@color/widget_brand" />
+        android:color="#B8F5F8FF" />
     <corners android:radius="999dp" />
 </shape>

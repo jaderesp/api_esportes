@@ -23,7 +23,6 @@ import androidx.fragment.app.DialogFragment;
 import com.diegodev.apidesportes.R;
 import com.diegodev.apidesportes.jogos.event.EsporteEventListener;
 import com.diegodev.apidesportes.jogos.item.ItemCanalLink;
-import com.diegodev.apidesportes.jogos.item.ItemCanalSimples;
 import com.diegodev.apidesportes.jogos.item.ItemJogos;
 import com.diegodev.apidesportes.jogos.utils.ImageLoader;
 import com.diegodev.apidesportes.jogos.utils.JogoStatus;
@@ -31,7 +30,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,10 +53,6 @@ public class CanaisDialogFragment extends DialogFragment {
     private static final String ARG_LOGO_B = "logo_b";
     private static final String ARG_GOLS_A = "gols_a";
     private static final String ARG_GOLS_B = "gols_b";
-    private static final String ARG_CANAIS = "canais";
-    private static final String ARG_CANAIS_IA = "canais_ia";
-    private static final String ARG_CANAIS_SIMPLES = "canais_simples";
-    private static final String ARG_CANAIS_LINKS = "canais_links";
     private static final String ARG_CANAIS_LINKS_JSON = "canais_links_json";
 
     private LinearLayout containerCanais;
@@ -76,47 +70,15 @@ public class CanaisDialogFragment extends DialogFragment {
         args.putString(ARG_LOGO_B, jogo.getLogoB());
         args.putInt(ARG_GOLS_A, jogo.getGolsA());
         args.putInt(ARG_GOLS_B, jogo.getGolsB());
-        args.putStringArrayList(ARG_CANAIS, toArrayList(jogo.getCanais()));
-        args.putStringArrayList(ARG_CANAIS_IA, toArrayList(jogo.getCanaisIa()));
-        args.putStringArrayList(ARG_CANAIS_SIMPLES, nomesSimples(jogo.getCanaisSimples()));
-        args.putStringArrayList(ARG_CANAIS_LINKS, nomesLinks(jogo.getCanaisLinks()));
         // Passa os objetos completos (canais_links) para exibir logotipos no modal.
+        // O modal exibe APENAS os canais da playlist (canais_links): só eles têm a
+        // transmission_url para reprodução. Os demais índices (canais, canais_ia,
+        // canais_simples) não são listados — canais sem URL não são clicáveis.
         if (jogo.getCanaisLinks() != null && !jogo.getCanaisLinks().isEmpty()) {
             args.putString(ARG_CANAIS_LINKS_JSON, new Gson().toJson(jogo.getCanaisLinks()));
         }
         fragment.setArguments(args);
         return fragment;
-    }
-
-    /** Null-safe: o Bundle não aceita lista vazia como nula. */
-    private static ArrayList<String> toArrayList(List<String> list) {
-        return list == null ? new ArrayList<>() : new ArrayList<>(list);
-    }
-
-    /** Extrai apenas os nomes dos canais simples (objetos) para exibir no modal. */
-    private static ArrayList<String> nomesSimples(List<ItemCanalSimples> canais) {
-        ArrayList<String> nomes = new ArrayList<>();
-        if (canais != null) {
-            for (ItemCanalSimples canal : canais) {
-                if (canal != null && canal.getChannelName() != null && !canal.getChannelName().trim().isEmpty()) {
-                    nomes.add(canal.getChannelName().trim());
-                }
-            }
-        }
-        return nomes;
-    }
-
-    /** Extrai apenas os nomes dos canais link (objetos) para exibir no modal. */
-    private static ArrayList<String> nomesLinks(List<ItemCanalLink> canais) {
-        ArrayList<String> nomes = new ArrayList<>();
-        if (canais != null) {
-            for (ItemCanalLink canal : canais) {
-                if (canal != null && canal.getChannelName() != null && !canal.getChannelName().trim().isEmpty()) {
-                    nomes.add(canal.getChannelName().trim());
-                }
-            }
-        }
-        return nomes;
     }
 
     @Nullable
@@ -170,21 +132,14 @@ public class CanaisDialogFragment extends DialogFragment {
         }
     }
 
-    /** Monta as seções de canais dentro do ScrollView. Os canais_links vêm primeiro. */
+    /**
+     * Monta os canais dentro do ScrollView. Exibe APENAS os canais_links
+     * (playlist): só eles possuem a {@code transmission_url} para reprodução.
+     * Os demais índices (canais, canais_ia, canais_simples) NÃO são listados —
+     * canais sem URL de transmissão não são clicáveis.
+     */
     private void preencherCanais() {
-        Bundle args = getArguments();
-        if (args == null) {
-            return;
-        }
-
-        // Primeiro os canais_links (com logotipo e dados de transmissão),
-        // depois as demais listas simples de nomes.
-        boolean vazio = adicionarSecaoLinks()
-                && adicionarSecao(R.string.modal_canais_sec_simples, args.getStringArrayList(ARG_CANAIS_SIMPLES))
-                && adicionarSecao(R.string.modal_canais_sec_tv, args.getStringArrayList(ARG_CANAIS))
-                && adicionarSecao(R.string.modal_canais_sec_ia, args.getStringArrayList(ARG_CANAIS_IA));
-
-        if (vazio) {
+        if (adicionarSecaoLinks()) {
             TextView empty = new TextView(requireContext());
             empty.setText(R.string.modal_canais_empty);
             empty.setTextColor(getResources().getColor(R.color.modal_text_secondary));
@@ -273,47 +228,6 @@ public class CanaisDialogFragment extends DialogFragment {
                     }
                 }
             });
-            containerCanais.addView(chip);
-        }
-
-        // Espaço entre seções
-        View espaco = new View(requireContext());
-        espaco.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, dp(4)));
-        containerCanais.addView(espaco);
-
-        return false;
-    }
-
-    /**
-     * Adiciona uma seção com título + um chip por canal.
-     * @return true se a lista estava vazia (para saber se tudo está vazio).
-     */
-    private boolean adicionarSecao(int tituloRes, List<String> canais) {
-        if (canais == null || canais.isEmpty()) {
-            return true;
-        }
-
-        // Título da seção
-        TextView titulo = new TextView(requireContext());
-        titulo.setText(tituloRes);
-        titulo.setTextColor(getResources().getColor(R.color.modal_section_title));
-        titulo.setTextSize(12);
-        containerCanais.addView(titulo);
-
-        // Um chip (cartão) para cada canal
-        for (String canal : canais) {
-            if (canal == null || canal.trim().isEmpty()) {
-                continue;
-            }
-            TextView chip = new TextView(requireContext());
-            chip.setText(canal.trim());
-            chip.setTextColor(getResources().getColor(R.color.white));
-            chip.setTextSize(14);
-            chip.setGravity(Gravity.CENTER);
-            chip.setPadding(dp(10), dp(8), dp(10), dp(8));
-            chip.setBackgroundResource(R.drawable.bg_canal_chip_selector_modal);
-            chip.setFocusable(true); // foco com controle remoto (TV)
             containerCanais.addView(chip);
         }
 

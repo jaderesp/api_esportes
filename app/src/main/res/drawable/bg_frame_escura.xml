@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Overlay escuro da tela — gradiente na identidade do widget (bg #030b16). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="160"
+        android:endColor="#B3030B16"
+        android:startColor="#DB020812" />
+</shape>

@@ -19,4 +19,23 @@
     <color name="classificacao_selected">#0080FF</color>
     <color name="classificacao_focus">#33B5FF</color>
     <color name="classificacao_normal">#09FFFFFF</color>
+
+    <!-- Widget layout (1.7) — identidade visual igual ao widget web -->
+    <color name="widget_bg">#FF030B16</color>
+    <color name="widget_line">#38B6CCEC</color>
+    <color name="widget_text">#FFEAF2FF</color>
+    <color name="widget_text_soft">#FFD6E4FB</color>
+    <color name="widget_muted">#FF9DB3D7</color>
+    <color name="widget_brand">#FF76FF57</color>
+    <color name="widget_brand_soft">#1F76FF57</color>
+    <color name="widget_focus">#FF2F89FF</color>
+    <color name="widget_chip_bg">#CC12253F</color>
+    <color name="widget_chip_line">#73B699C4</color>
+    <color name="widget_divider">#1FFFFFFF</color>
+
+    <!-- Pills de status (igual widget: Encerrado / Ao Vivo / Em breve / Adiado) -->
+    <color name="status_encerrado">#FFF5F8FF</color>
+    <color name="status_ao_vivo">#FF6EFF8C</color>
+    <color name="status_em_breve">#FF7AC8FF</color>
+    <color name="status_adiado">#FFF0B35A</color>
 </resources>
