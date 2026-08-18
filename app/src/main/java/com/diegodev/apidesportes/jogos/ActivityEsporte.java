@@ -539,6 +539,16 @@ public class ActivityEsporte extends AppCompatActivity {
         int alvo = pos + delta;
         int count = adapter.getItemCount();
 
+        // Salta itens não focáveis (cabeçalho fixo e barras de zona de promoção da
+        // classificação) para o foco sempre parar em uma linha de time. Sem isso, a
+        // barra entre dois blocos (ex.: Libertadores/Sudamericana) "engole" o foco.
+        if (adapter instanceof ClassificacaoAdapter) {
+            ClassificacaoAdapter classificacao = (ClassificacaoAdapter) adapter;
+            while (alvo >= 0 && alvo < count && !classificacao.isFocavel(alvo)) {
+                alvo += delta;
+            }
+        }
+
         // No topo, pressionar para cima deixa o foco sair da lista
         // (navegação intencional para a barra de campeonatos/acima).
         if (alvo < 0) {

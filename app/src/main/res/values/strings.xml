@@ -8,14 +8,14 @@
     <string name="modal_canais_sec_tv">Canais de TV</string>
     <string name="modal_canais_sec_ia">Canais IA</string>
     <string name="modal_canais_sec_simples">Canais Simples</string>
-    <string name="modal_canais_sec_links">Links</string>
+    <string name="modal_canais_sec_links">Canais:</string>
 
     <!-- Modal de detalhes do canal -->
     <string name="modal_canal_title">Detalhes do Canal</string>
     <string name="modal_canal_transmissao">Transmissão</string>
 
     <!-- Tabela de classificação -->
-    <string name="opcao_classificacao">Tabela</string>
+    <string name="opcao_classificacao">Classificação</string>
     <string name="classificacao_col_time">Time</string>
     <string name="classificacao_col_j">J</string>
     <string name="classificacao_col_v">V</string>

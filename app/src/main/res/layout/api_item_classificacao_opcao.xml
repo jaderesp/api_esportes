@@ -1,36 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Opção "Tabela" (classificação) que aparece ACIMA de "HOJE" na coluna de datas,
-  enquanto um campeonato estiver selecionado.
-  Visualmente distinta das datas (ícone de troféu) para o usuário perceber
-  que é uma ação diferente.
--->
+<!-- Opção "Classificação" que aparece ACIMA de "HOJE" na coluna de datas,
+     enquanto um campeonato estiver selecionado. Segue o mesmo padrão visual
+     das opções de data (api_item_data) para ficarem padronizadas. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/_42sdp"
-    android:layout_height="@dimen/_42sdp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@drawable/bg_classificacao_item"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="2dp">
-
-    <ImageView
-        android:id="@+id/ivTrophy"
-        android:layout_width="@dimen/_14sdp"
-        android:layout_height="@dimen/_14sdp"
-        android:contentDescription="@string/opcao_classificacao"
-        android:src="@drawable/ic_trophy_white" />
+    android:orientation="horizontal"
+    android:padding="@dimen/_3sdp">
 
     <TextView
-        android:id="@+id/tvOpcaoClassificacao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_2sdp"
+        android:id="@+id/tvData"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_36sdp"
+        android:background="@drawable/bg_data_item"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:gravity="center"
+        android:maxLines="1"
         android:text="@string/opcao_classificacao"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_5sdp"
+        android:textColor="@color/widget_text"
+        android:textSize="@dimen/_6sdp"
         android:textStyle="bold" />
 </LinearLayout>

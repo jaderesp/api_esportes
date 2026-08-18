@@ -128,6 +128,15 @@ public class ClassificacaoAdapter extends RecyclerView.Adapter<RecyclerView.View
         return itens.size() + 1; // +1 do cabeçalho
     }
 
+    /** true se a posição (do adaptador) é uma linha de time focável.
+     *  Cabeçalho fixo (posição 0) e barras de zona de promoção não recebem foco. */
+    public boolean isFocavel(int position) {
+        if (position == 0) {
+            return false;
+        }
+        return !(itens.get(position - 1) instanceof PromocaoItem);
+    }
+
     static class HeaderHolder extends RecyclerView.ViewHolder {
         HeaderHolder(@NonNull View itemView) {
             super(itemView);

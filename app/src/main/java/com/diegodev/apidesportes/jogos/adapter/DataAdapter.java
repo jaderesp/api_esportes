@@ -17,8 +17,8 @@ import java.util.List;
 
 /**
  * Coluna lateral de navegação.
- * - Mostra a opção "Tabela" (classificação) ACIMA de "HOJE" quando um campeonato
- *   está selecionado.
+ * - Mostra a opção "Classificação" ACIMA de "HOJE" quando um campeonato
+ *   está selecionado, com o mesmo padrão visual das demais opções.
  * - Mostra "HOJE" + as próximas datas.
  * - Mantém o destaque (selected) no item ativo: a data escolhida ou a Tabela.
  */
@@ -71,8 +71,8 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void bindClassificacao(ClassificacaoHolder holder) {
-        holder.itemView.setSelected(classificacaoSelecionada);
-        holder.itemView.setOnClickListener(v -> {
+        holder.tvData.setSelected(classificacaoSelecionada);
+        holder.tvData.setOnClickListener(v -> {
             if (fragment != null) {
                 classificacaoSelecionada = true;
                 dataSelecionada = null;
@@ -113,8 +113,11 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class ClassificacaoHolder extends RecyclerView.ViewHolder {
+        TextView tvData;
+
         ClassificacaoHolder(@NonNull View itemView) {
             super(itemView);
+            tvData = itemView.findViewById(R.id.tvData);
         }
     }
 
