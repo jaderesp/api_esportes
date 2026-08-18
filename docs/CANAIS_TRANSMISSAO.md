@@ -12,7 +12,7 @@ Guia rápido de como funciona e como mexer nos **canais de transmissão**
   linha, uma faixa (rolagem horizontal) com um **chip** por link de transmissão:
   logotipo + nome do canal.
 - **Clique na linha do jogo** → abre um **modal (bottom sheet)** com os
-  **canais da playlist (`canais_links`)** do jogo (única seção exibida: `Links`).
+  **canais da playlist (`canais_links`)** do jogo (única seção exibida: `Canais:`).
 - **Clique em um chip da faixa** → abre o **modal de detalhes do canal**
   (logotipo grande, nome, servidor e URL de transmissão `.m3u8`).
 - Se o jogo não tiver canais, o modal mostra "Nenhum canal informado para este jogo.".
@@ -71,7 +71,7 @@ ActivityEsporte:
 | `app/src/main/java/com/diegodev/apidesportes/jogos/adapter/JogosAdapter.java` | Faixa de chips. Interfaces `OnItemClickListener` e `OnCanalClickListener`; `preencherCanais()` + `inflarChip()`. |
 | `app/src/main/res/layout/api_item_jogos.xml` | Layout da linha do jogo (root vertical + `HorizontalScrollView` com `containerCanaisLinha`). |
 | `app/src/main/res/layout/api_item_canal_linha.xml` | Layout de um chip (logo `iv_canal_logo` + nome `tv_canal_nome`). |
-| `app/src/main/java/com/diegodev/apidesportes/jogos/dialog/CanaisDialogFragment.java` | Modal com TODAS as seções (links primeiro, via JSON no Bundle). |
+| `app/src/main/java/com/diegodev/apidesportes/jogos/dialog/CanaisDialogFragment.java` | Modal com os canais_links (playlist) do jogo (única seção: `Canais:`, via JSON no Bundle). |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/dialog/CanalDetalheDialogFragment.java` | Modal de detalhes de um canal link (logo, nome, servidor, URL). |
 | `app/src/main/res/layout/dialog_canal_detalhe.xml` | Layout do modal de detalhes do canal. |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/ActivityEsporte.java` | Liga os cliques: `setOnItemClickListener` e `setOnCanalClickListener`. |
@@ -110,6 +110,7 @@ CanalDetalheDialogFragment.newInstance(canal) // canal: ItemCanalLink
   com `transmission_url` — canais de `canais_simples`/`canais`/`canais_ia` **não**
   aparecem (não têm URL de transmissão e não seriam clicáveis). Edite
   `preencherCanais()`/`adicionarSecaoLinks()` em `CanaisDialogFragment.java`;
+  título da seção em `strings.xml` (`modal_canais_sec_links` = "Canais:") e
   texto de vazio em `strings.xml` (`modal_canais_empty`).
 - **Cores:** em `app/src/main/res/values/colors.xml` (prefixo `modal_`).
 - **Logos via HTTP:** o `AndroidManifest.xml` da biblioteca tem

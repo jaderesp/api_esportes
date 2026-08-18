@@ -39,8 +39,8 @@ Guia principal para desenvolvedores, clientes e mantenedores do SDK:
   (`canais_links`) para reproduzir no seu proprio player.
 - **[Canais de Transmissao](docs/CANAIS_TRANSMISSAO.md)**
   Como funcionam a faixa de canais na lista e o modal de canais (apenas `canais_links`).
-- **[Tabela de Classificacao](docs/CLASSIFICACAO.md)**
-  Como funciona a opcao "Tabela" (classificacao por campeonato).
+- **[Classificacao](docs/CLASSIFICACAO.md)**
+  Como funciona a opcao "Classificacao" (classificacao por campeonato).
 
 ### Para quem mantem o SDK (manutencao/continuidade)
 
@@ -195,7 +195,7 @@ Dependencia atualizada (Groovy):
 
 ```groovy
 dependencies {
-    implementation 'com.github.jaderesp:api_esportes:1.5'
+    implementation 'com.github.jaderesp:api_esportes:1.8'
 }
 ```
 
@@ -203,13 +203,13 @@ Dependencia atualizada (Kotlin DSL):
 
 ```kotlin
 dependencies {
-    implementation("com.github.jaderesp:api_esportes:1.5")
+    implementation("com.github.jaderesp:api_esportes:1.8")
 }
 ```
 
-> **Versoes:** use sempre a versao mais recente publicada (atualmente `1.5`).
+> **Versoes:** use sempre a versao mais recente publicada (atualmente `1.8`).
 > A `1.2` ficou com build antigo em cache no JitPack (Event Listener de canal
-> ausente) — nao usar. Prefira `1.5` ou, no minimo, `1.4`.
+> ausente) — nao usar. Prefira `1.8` ou, no minimo, `1.7`.
 
 ### Passo 3 — Salvar token e abrir a tela
 
@@ -236,7 +236,7 @@ Guia completo (fluxo, payload, exemplos Java/Kotlin, limpeza) em
 
 ## Como receber atualizacoes do SDK (tags e versoes)
 
-Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`, `1.3`, `1.4`, `1.5`).
+Cada versao publicada e uma **tag** no repositorio (ex.: `1.0`, `1.1`, `1.2`, `1.3`, `1.4`, `1.5`, `1.7`, `1.8`).
 O JitPack compila a biblioteca a partir da tag indicada no final da dependencia
 — por isso, **e obrigatorio atualizar a versao** para receber novas
 funcionalidades e correcoes.
@@ -246,7 +246,7 @@ Para atualizar o SDK no seu app:
 1. Consulte a versao mais recente em **Releases/Tags** do repositorio:
    `https://github.com/jaderesp/api_esportes/releases` (a versao mais alta = mais recente).
 2. No arquivo de dependencias (Groovy ou Kotlin DSL), troque o numero no final
-   da dependencia (ex.: de `1.4` para `1.5`).
+   da dependencia (ex.: de `1.7` para `1.8`).
 3. Clique em `Sync Now` no Android Studio.
 4. Faca o build e publique o app normalmente.
 
@@ -255,7 +255,40 @@ Para atualizar o SDK no seu app:
 
 ### Novidades por versao
 
-**1.5** (atual):
+**1.8** (atual):
+
+- **Navegacao da classificacao corrigida (Android TV):** o foco ficava **preso**
+  ao navegar pela tabela de classificacao — ao passar pelas **barras de zona de
+  promocao** (ex.: Libertadores → Série B) a navegacao parava no fim do bloco e
+  nao seguia para a zona seguinte. Causa: essas barras e o cabecalho da tabela
+  **nao sao focaveis** (layout `api_item_classificacao_promocao.xml` sem
+  focusable); o `requestFocus` caia nelas e travava. Agora `navegarListaJogos()`
+  (`ActivityEsporte`) **pula automaticamente** as posicoes nao focaveis via o
+  novo `ClassificacaoAdapter.isFocavel(int)` — a rolagem `scrollToPosition` +
+  `focarItemAposLayout` segue funcionando. Testado na TV percorrendo todas as
+  posicoes (1 a 20) e voltando.
+- **Opcao "Tabela" renomeada para "Classificacao":** a opcao da coluna lateral
+  agora chama-se **"Classificacao"** e foi **padronizada** com o mesmo layout das
+  datas (`api_item_classificacao_opcao.xml` no padrao de `api_item_data.xml` —
+  `bg_data_item`, altura `_36sdp`, fonte `widget_text`; texto em `strings.xml`
+  `opcao_classificacao`).
+- **Titulo da secao do modal de canais:** o cabecalho da lista de links no modal
+  passou de "Links" para **"Canais:"** (`modal_canais_sec_links`).
+
+**1.7**:
+
+- **Pills de status do jogo (identidade do widget web):** novo
+  `JogoStatus.pillRes()` pinta o status como pill colorido — Encerrado (branco),
+  Ao Vivo (verde), Em breve (azul), Adiado (ambar) — aplicado na lista via
+  `JogosAdapter` (`bg_pill_*`).
+- **Redesign de layout/UX (Android TV):** cards de jogos reescritos
+  (`bg_jogo_card*`), seletor de campeonato (`bg_menu_camp*`), item de data,
+  faixa de canais e tela `frame_esportes` ajustados; novas cores em `colors.xml`.
+- **Modal de canais apenas com `canais_links` (playlist):** o modal passou a
+  exibir **somente** os canais com URL de transmissao (`canais_links`); os
+  indices `canais`, `canais_ia` e `canais_simples` nao sao listados.
+
+**1.5** (anterior):
 
 - **Navegacao D-pad presa na lista de jogos (Android TV):** durante o scroll
   rapido (segurando a seta) o foco nao sai mais da lista para a coluna de datas
@@ -300,7 +333,7 @@ Para atualizar o SDK no seu app:
 - **Campo `stream_id`:** mapeado em `ItemCanalLink` (`getStreamId()`).
 - **Aviso `1.2`:** a versao `1.2` ficou com build antigo em cache no JitPack
   (metodos novos nao apareceram para os clientes). Use a versao mais recente
-  (`1.5`).
+  (`1.8`).
 
 **1.2**:
 

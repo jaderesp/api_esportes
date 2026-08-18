@@ -10,7 +10,7 @@ para redirecionar/reproduzir no próprio app:
   **canal** (`aoClicarNoCanal`), com o `stream_id` do canal clicado.
 
 > O evento de canal está disponível a partir da **versão 1.3** do SDK (a versão
-> `1.2` ficou com um build antigo em cache no JitPack — use sempre a mais recente, `1.5`).
+> `1.2` ficou com um build antigo em cache no JitPack — use sempre a mais recente, `1.8`).
 > O evento de jogo (`onJogoClicado`) existe desde a `1.2`.
 
 ---
@@ -224,7 +224,7 @@ Recomendação: registre o listener na Activity que inicia o SDK e chame
 | `app/src/main/java/com/diegodev/apidesportes/jogos/event/EsporteEventListener.java` | Holder estático dos listeners (`EsporteEventCallback` + `AoClicarNoCanalListener`), `setListener`/`onChannelClickListener`/`clear`, `notificarJogoClicado`/`notificarCanalClicado`, `possuiListenerDeCanal()` e helper `tabelaIdParaNome`. |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/ActivityEsporte.java` | `setList()`: chama `EsporteEventListener.notificarJogoClicado(jogo)` junto com a abertura do modal. |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/adapter/JogosAdapter.java` | Dispara `onItemClickListener` no clique da linha (origem do evento). |
-| `app/src/main/java/com/diegodev/apidesportes/jogos/dialog/CanaisDialogFragment.java` | Chips da seção "Links" notificam `notificarCanalClicado(stream_id)` no clique (só com ID válido) e encerram o SDK via `requireActivity().finish()` quando há listener de canal. Chips com logotipo (`channel_logo`) e `bg_canal_chip_selector_modal` (foco TV). |
+| `app/src/main/java/com/diegodev/apidesportes/jogos/dialog/CanaisDialogFragment.java` | Chips da seção "Canais:" notificam `notificarCanalClicado(stream_id)` no clique (só com ID válido) e encerram o SDK via `requireActivity().finish()` quando há listener de canal. Chips com logotipo (`channel_logo`) e `bg_canal_chip_selector_modal` (foco TV). |
 | `app/src/main/java/com/diegodev/apidesportes/jogos/item/ItemJogos.java` / `ItemCanalLink.java` | Modelos entregues no payload (`ItemCanalLink` tem `getStreamId()`). |
 
 ---
@@ -232,7 +232,7 @@ Recomendação: registre o listener na Activity que inicia o SDK e chame
 ## 9) Evento de clique no canal — `AoClicarNoCanalListener`
 
 Além do clique na linha do jogo, o SDK também emite um evento **quando o usuário
-clica em um canal de transmissão** dentro do modal de canais (seção "Links",
+clica em um canal de transmissão** dentro do modal de canais (seção "Canais:",
 ex.: "Paramount+ 1 FHD").
 
 O evento entrega **somente o `stream_id`** (int) — ID único e fixo do canal —
@@ -268,7 +268,7 @@ EsporteEventListener.onChannelClickListener { idCanal ->
 | Nenhum listener | O SDK mantém o comportamento anterior: apenas o modal continua aberto, nada é encerrado. |
 
 > **Importante (pedido do cliente):** assim que o usuário clica em um canal da seção
-> "Links", o SDK notifica o seu listener **e encerra a tela do SDK**
+> "Canais:", o SDK notifica o seu listener **e encerra a tela do SDK**
 > (`ActivityEsporte.finish()`), desde que haja um listener de canal registrado.
 > Assim o seu app recebe o `stream_id` e assume a reprodução sem voltar para a tela
 > de esportes. Sem listener registrado, o modal só continua aberto (nada quebra).
@@ -321,7 +321,7 @@ EsporteEventListener.onChannelClickListener { idCanal ->
 
 ### Encerramento do SDK ao clicar (pedido do cliente)
 
-Ao clicar em um canal da seção "Links" **com `stream_id` válido**, o SDK:
+Ao clicar em um canal da seção "Canais:" **com `stream_id` válido**, o SDK:
 
 1. Notifica o seu listener (`aoClicarNoCanal(idCanal)`) — sempre na UI thread;
 2. Encerra a tela do SDK com `requireActivity().finish()`, **desde que exista um
@@ -334,9 +334,9 @@ não registrarem o listener mantêm o modal aberto, sem encerrar nada.
 
 ### Logotipo e foco nos chips
 
-- O chip de cada canal da seção "Links" agora exibe o **`channel_logo`** (URL ou
+- O chip de cada canal da seção "Canais:" agora exibe o **`channel_logo`** (URL ou
   base64) quando a API informa o campo; sem logo, mostra apenas o nome.
-- Os chips do modal (seção `Links`, canais_links) usam o selector
+- Os chips do modal (seção `Canais:`, canais_links) usam o selector
   `bg_canal_chip_selector_modal`, que **destaca o chip quando focado** — amigável
   para navegação com controle remoto em Android TV.
 
@@ -355,8 +355,8 @@ O evento de canal só é disparado quando esse valor é não-nulo.
 ## 10) Observação sobre versão (JitPack)
 
 Os eventos de jogo e de canal estão publicados no repositório
-(`jaderesp/api_esportes`). Use a versão **`1.5`** (mais recente):
-`com.github.jaderesp:api_esportes:1.5`.
+(`jaderesp/api_esportes`). Use a versão **`1.8`** (mais recente):
+`com.github.jaderesp:api_esportes:1.8`.
 
 > **Atenção à `1.2`:** essa versão ficou com um build antigo em cache no JitPack
 > (os métodos novos não apareceram após limpar o cache local — o cache é no
